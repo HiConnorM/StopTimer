@@ -16,7 +16,7 @@ enum RoundState {
 final class GameViewModel: ObservableObject {
 
     @Published private(set) var state: RoundState = .ready
-    @Published private(set) var targetSeconds: Double = TargetGenerator.next()
+    @Published private(set) var targetSeconds: Double = 5
     @Published private(set) var lastResult: GameResult?
     @Published private(set) var lastReward: RewardBundle = .zero
 
@@ -27,6 +27,7 @@ final class GameViewModel: ObservableObject {
     init(progressStore: ProgressStore, haptics: HapticsManager) {
         self.progressStore = progressStore
         self.haptics = haptics
+        self.targetSeconds = TargetGenerator.next(forAttempts: progressStore.progress.lifetimeAttempts)
     }
 
     /// Combo coming into the current round (for the "Trust your timing" prompt etc.).
@@ -63,7 +64,7 @@ final class GameViewModel: ObservableObject {
 
     /// Fresh target.
     func next() {
-        targetSeconds = TargetGenerator.next()
+        targetSeconds = TargetGenerator.next(forAttempts: progressStore.progress.lifetimeAttempts)
         timer.reset()
         lastResult = nil
         lastReward = .zero

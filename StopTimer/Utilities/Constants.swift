@@ -17,14 +17,26 @@ enum Constants {
     static let progressKey = "stoptimer.player.progress.v1"
     static let settingsKey = "stoptimer.game.settings.v1"
 
-    // MARK: Theme
+    // MARK: Theme — "Bright arcade": warm cream, candy red, chunky & glossy.
     enum Theme {
-        static let background    = Color(red: 0.04, green: 0.05, blue: 0.10)
-        static let backgroundTop = Color(red: 0.07, green: 0.09, blue: 0.16)
-        static let card          = Color(red: 0.10, green: 0.12, blue: 0.18)
-        static let cardStroke    = Color.white.opacity(0.08)
-        static let accent        = Color(red: 0.25, green: 0.65, blue: 1.00)
-        static let textPrimary   = Color.white
-        static let textSecondary = Color(white: 0.62)
+        static let background    = Color(red: 0.97, green: 0.95, blue: 0.90)  // warm cream
+        static let backgroundTop = Color(red: 1.00, green: 0.99, blue: 0.96)  // near-white top
+        static let card          = Color.white
+        static let cardStroke    = Color.black.opacity(0.06)
+
+        // Candy-red primary button + its darker "lip"/shadow.
+        static let accent        = Color(red: 0.96, green: 0.26, blue: 0.30)
+        static let accentDark    = Color(red: 0.80, green: 0.13, blue: 0.18)
+
+        // Ink (used for the Stop button) + its lip.
+        static let ink           = Color(red: 0.16, green: 0.17, blue: 0.22)
+        static let inkDark       = Color(red: 0.07, green: 0.08, blue: 0.11)
+
+        static let textPrimary   = Color(red: 0.13, green: 0.12, blue: 0.15)  // near-black
+        static let textSecondary = Color(red: 0.46, green: 0.44, blue: 0.48)
+
+        // Fun accents for stats / coins.
+        static let coin          = Color(red: 0.98, green: 0.74, blue: 0.12)
+        static let mint          = Color(red: 0.18, green: 0.78, blue: 0.55)
     }
 }

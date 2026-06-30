@@ -38,15 +38,16 @@ enum AccuracyGrade: String, CaseIterable, Codable {
         }
     }
 
+    /// Punchy colors tuned to read on the light/cream arcade background.
     var color: Color {
         switch self {
-        case .legendary: return Color(red: 1.00, green: 0.84, blue: 0.00)
-        case .perfect:   return Color(red: 0.30, green: 0.85, blue: 1.00)
-        case .excellent: return Color(red: 0.40, green: 0.90, blue: 0.60)
-        case .great:     return Color(red: 0.55, green: 0.85, blue: 0.55)
-        case .good:      return Color(red: 0.75, green: 0.75, blue: 0.82)
-        case .close:     return Color(red: 0.95, green: 0.65, blue: 0.30)
-        case .miss:      return Color(red: 0.95, green: 0.40, blue: 0.40)
+        case .legendary: return Color(red: 0.96, green: 0.62, blue: 0.04)  // gold
+        case .perfect:   return Color(red: 0.93, green: 0.20, blue: 0.55)  // hot pink
+        case .excellent: return Color(red: 0.10, green: 0.70, blue: 0.46)  // mint green
+        case .great:     return Color(red: 0.16, green: 0.62, blue: 0.85)  // sky blue
+        case .good:      return Color(red: 0.45, green: 0.55, blue: 0.95)  // periwinkle
+        case .close:     return Color(red: 0.95, green: 0.55, blue: 0.15)  // orange
+        case .miss:      return Color(red: 0.93, green: 0.26, blue: 0.30)  // red
         }
     }
 

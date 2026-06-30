@@ -1,42 +1,69 @@
 import SwiftUI
 
-/// Large, tappable action button used for Start / Stop / result actions.
-/// `filled` controls the high-emphasis (solid) vs low-emphasis (outlined) look.
+/// Big, glossy, "juicy" 3D button. A darker lip sits beneath the face; pressing
+/// compresses the face down onto the lip for a satisfying physical click.
 struct PrimaryButton: View {
     let title: String
-    var filled: Bool = true
-    var tint: Color = Constants.Theme.accent
+    var face: Color = Constants.Theme.accent
+    var lip: Color = Constants.Theme.accentDark
     var foreground: Color = .white
+    var depth: CGFloat = 9
+    var height: CGFloat = 66
     let action: () -> Void
-
-    @State private var pressed = false
 
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.title3.weight(.bold))
-                .tracking(1)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 20)
-                .background(background)
-                .foregroundStyle(foreground)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .stroke(filled ? Color.clear : tint.opacity(0.8), lineWidth: 1.5)
-                )
-                .shadow(color: filled ? tint.opacity(0.45) : .clear, radius: 18, y: 6)
-                .scaleEffect(pressed ? 0.96 : 1)
+                .font(.system(size: 24, weight: .black, design: .rounded))
+                .tracking(1.5)
         }
-        .buttonStyle(.plain)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in withAnimation(.easeOut(duration: 0.12)) { pressed = true } }
-                .onEnded { _ in withAnimation(.easeOut(duration: 0.18)) { pressed = false } }
-        )
+        .buttonStyle(JuicyButtonStyle(face: face, lip: lip, foreground: foreground,
+                                      depth: depth, height: height))
     }
+}
 
-    private var background: Color {
-        filled ? tint : Constants.Theme.card
+/// The reusable juicy press style. Used for Start / Stop / Play / Retry / Next.
+struct JuicyButtonStyle: ButtonStyle {
+    var face: Color
+    var lip: Color
+    var foreground: Color
+    var depth: CGFloat
+    var height: CGFloat
+    var cornerRadius: CGFloat = 24
+
+    func makeBody(configuration: Configuration) -> some View {
+        let pressed = configuration.isPressed
+        ZStack(alignment: .top) {
+            // Lip — the darker block the face presses onto.
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(lip)
+                .frame(height: height)
+                .offset(y: depth)
+
+            // Face — glossy top, carries the label.
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(face)
+                .frame(height: height)
+                .overlay(
+                    // Glossy highlight across the top third.
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.40), Color.white.opacity(0.0)],
+                                startPoint: .top, endPoint: .center
+                            )
+                        )
+                        .padding(2)
+                )
+                .overlay(
+                    configuration.label
+                        .foregroundStyle(foreground)
+                        .shadow(color: lip.opacity(0.5), radius: 0, y: 1)
+                )
+                .offset(y: pressed ? depth : 0)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.bottom, depth)
+        .animation(.spring(response: 0.16, dampingFraction: 0.45), value: pressed)
     }
 }

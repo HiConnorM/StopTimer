@@ -31,7 +31,7 @@ struct RootView: View {
                      haptics: haptics,
                      onHome: { showingGame = false })
                 .environmentObject(settingsVM)
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(.light)
         }
     }
 }

@@ -12,4 +12,19 @@ struct GameResult: Equatable {
     var absoluteError: Double { abs(signedDifference) }
 
     var grade: AccuracyGrade { AccuracyGrade.grade(forError: absoluteError) }
+
+    /// Plain-text share card for the native share sheet.
+    var shareText: String {
+        """
+        ⏱️ STOP TIMER
+
+        Target: \(TimeFormatting.seconds(targetSeconds))
+        Actual: \(TimeFormatting.seconds(actualSeconds))
+        Diff: \(TimeFormatting.signed(signedDifference))
+
+        \(grade.title)
+
+        Can you beat me?
+        """
+    }
 }

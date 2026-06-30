@@ -10,25 +10,34 @@ struct TimerOrbView: View {
 
     var body: some View {
         ZStack {
+            // Soft outer halo.
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [tint.opacity(0.45), tint.opacity(0.05)],
-                        center: .center, startRadius: 4, endRadius: 130
+                        colors: [tint.opacity(0.35), tint.opacity(0.0)],
+                        center: .center, startRadius: 10, endRadius: 150
                     )
                 )
+            // Glossy core.
             Circle()
-                .stroke(tint.opacity(0.9), lineWidth: 3)
-            Circle()
-                .fill(tint.opacity(0.18))
-                .padding(28)
+                .fill(
+                    LinearGradient(colors: [tint, Constants.Theme.accentDark],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+                .padding(26)
+                .overlay(
+                    Circle()
+                        .fill(LinearGradient(colors: [.white.opacity(0.5), .clear],
+                                             startPoint: .top, endPoint: .center))
+                        .padding(40)
+                )
         }
-        .frame(width: 220, height: 220)
-        .shadow(color: tint.opacity(0.6), radius: 36)
-        .scaleEffect(pulse ? 1.06 : 0.94)
+        .frame(width: 230, height: 230)
+        .shadow(color: tint.opacity(0.45), radius: 30, y: 8)
+        .scaleEffect(pulse ? 1.07 : 0.93)
         .onAppear {
             guard !reducedMotion else { return }
-            withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+            withAnimation(.easeInOut(duration: 0.85).repeatForever(autoreverses: true)) {
                 pulse = true
             }
         }

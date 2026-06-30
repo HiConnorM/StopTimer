@@ -69,7 +69,8 @@ SwiftUI/animation timer.
 
 ## Game rules (locked)
 
-- **Target:** random `Double` in 3.000–15.000 s, shown to 3 decimals.
+- **Target:** difficulty-ramped by lifetime attempts — whole seconds (3–10) for the
+  first 5 rounds, then halves, tenths, and finally full precision (3.000–15.000).
 - **Score:** `error = abs(actual - target)`, `signedDifference = actual - target`.
 - **Grades:** ≤0.003 Legendary · ≤0.010 Perfect · ≤0.030 Excellent · ≤0.080 Great · ≤0.150 Good ·
   ≤0.300 Close · else Miss.
@@ -103,13 +104,15 @@ reset, and reward math are the recommended next addition.)
 ## What to build next
 
 1. **Tests** — `XCTest` for `AccuracyScorer` thresholds, `RewardCalculator` payouts/combo, and
-   `ProgressStore` save/load round-trips.
-2. **Juice** — Core Haptics patterns, perfect/legendary glow, miss shake, combo pop, sound.
-3. **Modes** — Endless (3 lives), Ladder (10 stages), Zen, local Daily; introduce a `GameMode` enum
+   `ProgressStore` save/load round-trips. (Needs a unit-test target added to the project.)
+2. **Modes** — Endless (3 lives), Ladder (10 stages), Zen, local Daily; introduce a `GameMode` enum
    and a `ModesView` once two modes share a shape.
-4. **Profile depth** — achievements, richer rank surfacing.
-5. **Cosmetics scaffolding** — themes / orb skins / titles, equipped ids saved locally (no store).
-6. **Beta** — TestFlight, screenshots, App Store copy.
+3. **Profile depth** — achievements, richer rank surfacing.
+4. **Cosmetics scaffolding** — themes / orb skins / titles, equipped ids saved locally (no store).
+5. **Beta** — TestFlight, screenshots, App Store copy.
+
+Already in: bright-arcade UI, difficulty-ramped whole-number targets, glossy 3D buttons,
+grade-based haptics, result juice (pop-in, glow, miss shake, combo pop), and native share.
 
 Deliberately **not** in this MVP: backend, accounts, cloud save, Game Center, leaderboards, ads,
 IAP/StoreKit, multiplayer, push, season pass.

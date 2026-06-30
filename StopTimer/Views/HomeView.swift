@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Landing screen. Logo, level/coins header, the big Play button, and two
-/// at-a-glance stat cards. Play opens the gameplay flow.
+/// Landing screen. Logo, level/coins header, a punchy hook, the big juicy Play
+/// button, and two at-a-glance stat cards.
 struct HomeView: View {
     @StateObject private var vm: HomeViewModel
     let onPlay: () -> Void
@@ -17,20 +17,26 @@ struct HomeView: View {
                            startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 22) {
                 header
 
                 Spacer()
 
-                VStack(spacing: 6) {
-                    Text("STOP TIMER")
-                        .font(.system(size: 40, weight: .heavy, design: .rounded))
+                VStack(spacing: 8) {
+                    Text("STOP")
+                        .font(.system(size: 56, weight: .black, design: .rounded))
+                        .foregroundStyle(Constants.Theme.accent)
+                    Text("TIMER")
+                        .font(.system(size: 56, weight: .black, design: .rounded))
                         .foregroundStyle(Constants.Theme.textPrimary)
-                        .shadow(color: Constants.Theme.accent.opacity(0.4), radius: 16)
-                    Text("Perfect Second Challenge")
-                        .font(.subheadline)
-                        .foregroundStyle(Constants.Theme.textSecondary)
+                        .offset(y: -18)
                 }
+                .shadow(color: Constants.Theme.accent.opacity(0.20), radius: 14, y: 6)
+
+                Text("One try. No excuses.")
+                    .font(.system(.headline, design: .rounded).weight(.semibold))
+                    .foregroundStyle(Constants.Theme.textSecondary)
+                    .offset(y: -10)
 
                 Spacer()
 
@@ -38,13 +44,13 @@ struct HomeView: View {
                     StatCard(label: "Best Error", value: vm.bestErrorText,
                              systemImage: "target")
                     StatCard(label: "Perfects", value: "\(vm.perfectCount)",
-                             systemImage: "star.fill", tint: .yellow)
+                             systemImage: "star.fill", tint: Constants.Theme.coin)
                 }
                 .padding(.horizontal, 24)
 
                 PrimaryButton(title: "PLAY") { onPlay() }
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 6)
             }
             .padding(.top, 12)
         }
@@ -54,7 +60,7 @@ struct HomeView: View {
         HStack {
             pill(symbol: "person.fill", text: "Lv \(vm.playerLevel)", tint: Constants.Theme.accent)
             Spacer()
-            pill(symbol: "dollarsign.circle.fill", text: "\(vm.coins)", tint: .yellow)
+            pill(symbol: "dollarsign.circle.fill", text: "\(vm.coins)", tint: Constants.Theme.coin)
         }
         .padding(.horizontal, 24)
     }
@@ -62,11 +68,12 @@ struct HomeView: View {
     private func pill(symbol: String, text: String, tint: Color) -> some View {
         HStack(spacing: 6) {
             Image(systemName: symbol).foregroundStyle(tint)
-            Text(text).font(.subheadline.weight(.semibold))
+            Text(text)
+                .font(.system(.subheadline, design: .rounded).weight(.bold))
                 .foregroundStyle(Constants.Theme.textPrimary)
         }
         .padding(.horizontal, 14).padding(.vertical, 8)
         .background(Constants.Theme.card, in: Capsule())
-        .overlay(Capsule().stroke(Constants.Theme.cardStroke, lineWidth: 1))
+        .shadow(color: .black.opacity(0.06), radius: 6, y: 3)
     }
 }

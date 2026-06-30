@@ -1,0 +1,20 @@
+import SwiftUI
+
+/// Horizontal shake driven by an animatable value 0...1. Used to punish a Miss.
+struct Shake: GeometryEffect {
+    var amount: CGFloat = 9
+    var shakes: CGFloat = 3
+    var animatableData: CGFloat
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let dx = amount * sin(animatableData * .pi * shakes)
+        return ProjectionTransform(CGAffineTransform(translationX: dx, y: 0))
+    }
+}
+
+extension View {
+    /// Apply with a @State value you animate 0 -> 1 to trigger the shake.
+    func shake(_ value: CGFloat) -> some View {
+        modifier(Shake(animatableData: value))
+    }
+}
