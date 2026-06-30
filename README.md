@@ -1,0 +1,115 @@
+# Stop Timer — Perfect Second Challenge
+
+A native iOS SwiftUI precision game. You see a target time, tap **Start**, the timer goes
+**hidden**, and you tap **Stop** when you think it hit the target. The app reveals how close you
+were, grades you, and pays out XP / coins / combo — all saved locally.
+
+This is the first playable MVP: **Classic mode**, full Home → Game → Result → Profile → Settings
+flow, local progression, and grade-based haptics. No backend, ads, IAP, or accounts.
+
+---
+
+## How to open & run (Simulator)
+
+1. Open `StopTimer.xcodeproj` in Xcode (26.x).
+2. Pick an iPhone simulator (e.g. **iPhone 17**) in the scheme/destination selector.
+3. Press **⌘R**.
+
+Or from the command line:
+
+```bash
+xcodebuild -project StopTimer.xcodeproj -scheme StopTimer \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+xcrun simctl install "iPhone 17" build/Build/Products/Debug-iphonesimulator/StopTimer.app
+xcrun simctl launch "iPhone 17" com.stoptimer.app
+```
+
+**Play:** Home → **PLAY** → see the target → **START** (timer hides, orb pulses) → **STOP** →
+read your grade and rewards → **RETRY** (same target) / **NEXT** (new target) / **Home**. Your
+stats persist across launches; check the **Profile** tab.
+
+## How to run on a physical iPhone
+
+1. Connect the iPhone, select it as the run destination.
+2. Project → target **StopTimer** → **Signing & Capabilities** → check **Automatically manage
+   signing** and pick your **personal team** (a free Apple ID works).
+3. Xcode may rewrite the bundle id to be unique to your team — that's fine.
+4. Press **⌘R**. On the phone, trust the developer profile under
+   **Settings → General → VPN & Device Management** the first time.
+
+> Haptics only fire on a real device — the Simulator does not vibrate.
+
+---
+
+## Project layout
+
+File-system-synchronized Xcode group: every file under `StopTimer/` is automatically part of the
+target, so adding new Swift files needs no project edits.
+
+```
+StopTimer/
+  StopTimerApp.swift     @main; composition root (ProgressStore, SettingsViewModel, HapticsManager)
+  Models/                AccuracyGrade, GameResult, RewardBundle, PlayerProgress, GameSettings
+  Services/              PrecisionTimer, AccuracyScorer, TargetGenerator, RewardCalculator,
+                         ProgressStore (UserDefaults+Codable), HapticsManager
+  ViewModels/            GameViewModel, HomeViewModel, ProfileViewModel, SettingsViewModel
+  Views/                 RootView, HomeView, GameView, ResultView, ProfileView, SettingsView
+  Components/            PrimaryButton, StatCard, GradeBadge, TimerOrbView
+  Utilities/             TimeFormatting, Constants
+```
+
+**Architecture:** one-directional MVVM —
+`View → VM method → Service → @Published mutation → View re-render`.
+
+**Precision rules (never bend):** time is always `Double` seconds; elapsed time is measured by a
+monotonic clock (`DispatchTime.uptimeNanoseconds` in `PrecisionTimer`); scoring never reads a
+SwiftUI/animation timer.
+
+## Game rules (locked)
+
+- **Target:** random `Double` in 3.000–15.000 s, shown to 3 decimals.
+- **Score:** `error = abs(actual - target)`, `signedDifference = actual - target`.
+- **Grades:** ≤0.003 Legendary · ≤0.010 Perfect · ≤0.030 Excellent · ≤0.080 Great · ≤0.150 Good ·
+  ≤0.300 Close · else Miss.
+- **Rewards (XP/coins):** 100/50 · 75/35 · 50/25 · 30/15 · 15/8 · 5/3 · 1/0.
+- **Combo:** Good-or-better increments; Close/Miss resets. Coins get a combo multiplier
+  (×1.0 / ×1.1 / ×1.25 / ×1.5 at 0–4 / 5–9 / 10–19 / 20+); XP is never multiplied.
+
+---
+
+## Common errors & fixes
+
+- **`'@main' attribute can only apply to one type`** — there should be exactly one `@main`
+  (`StopTimerApp`). If you copied another `App`/`ContentView`, delete the duplicate.
+- **`Cannot find 'X' in scope`** — the file isn't in the target. With the synchronized group this
+  shouldn't happen; if you moved files out of `StopTimer/`, drag them back in.
+- **Preview shows nothing / "failed to build"** — hit **Resume** above the canvas (⌥⌘P). Previews
+  flake on save; the app itself still runs.
+- **Signing fails on device** — set your personal **Team** under Signing & Capabilities (not needed
+  for the Simulator).
+- **No haptics** — expected in the Simulator; test on a real iPhone, and check
+  **Settings → Haptics** is on.
+
+## Verifying scoring quickly
+
+In `GameViewModel.stopRound()` you can temporarily force `let elapsed = targetSeconds + 0.004` to
+confirm it grades **Perfect**, then revert. (Formal `XCTest` cases for the grade thresholds, combo
+reset, and reward math are the recommended next addition.)
+
+---
+
+## What to build next
+
+1. **Tests** — `XCTest` for `AccuracyScorer` thresholds, `RewardCalculator` payouts/combo, and
+   `ProgressStore` save/load round-trips.
+2. **Juice** — Core Haptics patterns, perfect/legendary glow, miss shake, combo pop, sound.
+3. **Modes** — Endless (3 lives), Ladder (10 stages), Zen, local Daily; introduce a `GameMode` enum
+   and a `ModesView` once two modes share a shape.
+4. **Profile depth** — achievements, richer rank surfacing.
+5. **Cosmetics scaffolding** — themes / orb skins / titles, equipped ids saved locally (no store).
+6. **Beta** — TestFlight, screenshots, App Store copy.
+
+Deliberately **not** in this MVP: backend, accounts, cloud save, Game Center, leaderboards, ads,
+IAP/StoreKit, multiplayer, push, season pass.
