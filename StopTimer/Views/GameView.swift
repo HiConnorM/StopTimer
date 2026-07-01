@@ -93,9 +93,8 @@ struct GameView: View {
 
             if vm.currentCombo > 0 { comboBadge }
             Spacer()
-            PrimaryButton(title: "START", face: progress.buttonFace, lip: progress.buttonLip) { vm.startRound() }
-                .padding(.horizontal, 26)
-                .padding(.bottom, 34)
+            BigRedButton(title: "START") { vm.startRound() }
+                .padding(.bottom, 24)
         }
     }
 
