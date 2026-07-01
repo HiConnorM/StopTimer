@@ -36,22 +36,5 @@ final class ProfileViewModel: ObservableObject {
         p.lifetimeAttempts > 0 ? TimeFormatting.seconds(p.averageError) : "—"
     }
 
-    /// Local rank placeholder. Skill-weighted: rewards low average error and high
-    /// precision count, gated lightly by experience. Online rank arrives later.
-    var rankTitle: String {
-        guard p.lifetimeAttempts >= 5 else { return "Unranked" }
-        let avg = p.averageError
-        let precise = p.legendaryCount + p.perfectCount
-        switch (avg, precise) {
-        case (..<0.020, _) where precise >= 10: return "Apex"
-        case (..<0.030, _):                     return "Legend"
-        case (..<0.050, _):                     return "Grandmaster"
-        case (..<0.070, _):                     return "Master"
-        case (..<0.090, _):                     return "Diamond"
-        case (..<0.120, _):                     return "Platinum"
-        case (..<0.160, _):                     return "Gold"
-        case (..<0.220, _):                     return "Silver"
-        default:                                return "Bronze"
-        }
-    }
+    var rankTitle: String { p.rank }
 }

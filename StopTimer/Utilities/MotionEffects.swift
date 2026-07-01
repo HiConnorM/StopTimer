@@ -17,4 +17,21 @@ extension View {
     func shake(_ value: CGFloat) -> some View {
         modifier(Shake(animatableData: value))
     }
+
+    /// Staggered fade + slide-up entrance. Drive `shown` true once on appear.
+    func appearSlide(_ shown: Bool, delay: Double = 0) -> some View {
+        modifier(AppearSlide(shown: shown, delay: delay))
+    }
+}
+
+struct AppearSlide: ViewModifier {
+    let shown: Bool
+    var delay: Double = 0
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(shown ? 1 : 0)
+            .offset(y: shown ? 0 : 20)
+            .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(delay), value: shown)
+    }
 }

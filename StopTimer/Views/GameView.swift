@@ -72,21 +72,29 @@ struct GameView: View {
     }
 
     private var runningView: some View {
-        VStack(spacing: 22) {
+        VStack(spacing: 26) {
             Spacer()
             Text("Trust your timing")
                 .font(.system(.title3, design: .rounded).weight(.bold))
                 .foregroundStyle(Constants.Theme.textSecondary)
-            TimerOrbView(reducedMotion: reducedMotion)
-            Text("Tap when you feel it")
-                .font(.system(.subheadline, design: .rounded))
+
+            // The orb IS the stop button — tap it when you feel the target.
+            Button { vm.stopRound() } label: {
+                TimerOrbView(reducedMotion: reducedMotion)
+                    .overlay(
+                        Text("STOP")
+                            .font(.system(size: 40, weight: .black, design: .rounded))
+                            .tracking(2)
+                            .foregroundStyle(.white)
+                            .shadow(color: Constants.Theme.accentDark.opacity(0.6), radius: 2, y: 2)
+                    )
+            }
+            .buttonStyle(PressableStyle(scale: 0.90))
+
+            Text("Tap the orb to stop")
+                .font(.system(.subheadline, design: .rounded).weight(.medium))
                 .foregroundStyle(Constants.Theme.textSecondary.opacity(0.8))
             Spacer()
-            PrimaryButton(title: "STOP",
-                          face: Constants.Theme.ink,
-                          lip: Constants.Theme.inkDark) { vm.stopRound() }
-                .padding(.horizontal, 26)
-                .padding(.bottom, 34)
         }
     }
 

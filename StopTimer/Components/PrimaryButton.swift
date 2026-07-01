@@ -67,3 +67,13 @@ struct JuicyButtonStyle: ButtonStyle {
         .animation(.spring(response: 0.16, dampingFraction: 0.45), value: pressed)
     }
 }
+
+/// Simple springy scale-on-press. Used for the tappable orb and the Home cards.
+struct PressableStyle: ButtonStyle {
+    var scale: CGFloat = 0.96
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? scale : 1)
+            .animation(.spring(response: 0.2, dampingFraction: 0.55), value: configuration.isPressed)
+    }
+}

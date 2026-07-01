@@ -46,4 +46,22 @@ struct PlayerProgress: Codable, Equatable {
     var levelProgress: Double {
         Double(xpIntoLevel) / Double(Constants.xpPerLevel)
     }
+
+    /// Local, skill-weighted rank placeholder (online rank comes later). Rewards
+    /// low average error and high precision count, gated lightly by experience.
+    var rank: String {
+        guard lifetimeAttempts >= 5 else { return "Unranked" }
+        let precise = legendaryCount + perfectCount
+        switch (averageError, precise) {
+        case (..<0.020, _) where precise >= 10: return "Apex"
+        case (..<0.030, _):                     return "Legend"
+        case (..<0.050, _):                     return "Grandmaster"
+        case (..<0.070, _):                     return "Master"
+        case (..<0.090, _):                     return "Diamond"
+        case (..<0.120, _):                     return "Platinum"
+        case (..<0.160, _):                     return "Gold"
+        case (..<0.220, _):                     return "Silver"
+        default:                                return "Bronze"
+        }
+    }
 }

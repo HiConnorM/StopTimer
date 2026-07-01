@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-/// Read model for the Home screen. Derives display values from the shared store.
+/// Read model for the Home hub. Derives display values from the shared store.
 @MainActor
 final class HomeViewModel: ObservableObject {
 
@@ -10,21 +10,30 @@ final class HomeViewModel: ObservableObject {
 
     init(progressStore: ProgressStore) {
         self.progressStore = progressStore
-        // Re-publish whenever the underlying progress changes.
         cancellable = progressStore.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }
     }
 
-    private var progress: PlayerProgress { progressStore.progress }
+    private var p: PlayerProgress { progressStore.progress }
 
-    var playerLevel: Int { progress.playerLevel }
-    var coins: Int { progress.coins }
-    var currentCombo: Int { progress.currentCombo }
-    var perfectCount: Int { progress.perfectCount + progress.legendaryCount }
+    var playerLevel: Int { p.playerLevel }
+    var coins: Int { p.coins }
+    var currentCombo: Int { p.currentCombo }
+    var longestCombo: Int { p.longestCombo }
+    var perfectCount: Int { p.perfectCount + p.legendaryCount }
+    var legendaryCount: Int { p.legendaryCount }
+    var lifetimeAttempts: Int { p.lifetimeAttempts }
+    var levelProgress: Double { p.levelProgress }
+    var xpIntoLevel: Int { p.xpIntoLevel }
+    var rank: String { p.rank }
 
     var bestErrorText: String {
-        guard let best = progress.bestError else { return "—" }
+        guard let best = p.bestError else { return "—" }
         return TimeFormatting.seconds(best)
+    }
+
+    var averageErrorText: String {
+        p.lifetimeAttempts > 0 ? TimeFormatting.seconds(p.averageError) : "—"
     }
 }

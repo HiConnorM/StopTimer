@@ -101,18 +101,27 @@ reset, and reward math are the recommended next addition.)
 
 ---
 
+## Tests
+
+`StopTimerTests/` holds `XCTest` coverage for the scoring core, reward table, combo
+growth/reset, and the `ProgressStore` save/load round-trip. Run in Xcode with **⌘U**, or:
+
+```
+xcodebuild test -project StopTimer.xcodeproj -scheme StopTimer \
+  -destination 'platform=iOS Simulator,name=iPhone 17' CODE_SIGNING_ALLOWED=NO
+```
+
 ## What to build next
 
-1. **Tests** — `XCTest` for `AccuracyScorer` thresholds, `RewardCalculator` payouts/combo, and
-   `ProgressStore` save/load round-trips. (Needs a unit-test target added to the project.)
-2. **Modes** — Endless (3 lives), Ladder (10 stages), Zen, local Daily; introduce a `GameMode` enum
+1. **Modes** — Endless (3 lives), Ladder (10 stages), Zen, local Daily; introduce a `GameMode` enum
    and a `ModesView` once two modes share a shape.
-3. **Profile depth** — achievements, richer rank surfacing.
-4. **Cosmetics scaffolding** — themes / orb skins / titles, equipped ids saved locally (no store).
-5. **Beta** — TestFlight, screenshots, App Store copy.
+2. **Profile depth** — achievements, daily streak, richer rank surfacing.
+3. **Cosmetics scaffolding** — themes / orb skins / titles, equipped ids saved locally (no store).
+4. **Beta** — TestFlight, screenshots, App Store copy.
 
-Already in: bright-arcade UI, difficulty-ramped whole-number targets, glossy 3D buttons,
-grade-based haptics, result juice (pop-in, glow, miss shake, combo pop), and native share.
+Already in: bright-arcade UI + rich home hub, difficulty-ramped whole-number targets, glossy 3D
+buttons, tap-the-orb-to-stop, grade-based haptics, result juice (pop-in, glow, miss shake, combo
+pop), native share, and unit tests.
 
 Deliberately **not** in this MVP: backend, accounts, cloud save, Game Center, leaderboards, ads,
 IAP/StoreKit, multiplayer, push, season pass.

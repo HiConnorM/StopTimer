@@ -8,11 +8,23 @@
 
 /* Begin PBXFileReference section */
 		ST0000000000000000000020 /* StopTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StopTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ST00000000000000000000B0 /* StopTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StopTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		ST0000000000000000000001 /* StopTimer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StopTimer; sourceTree = "<group>"; };
+		ST00000000000000000000B1 /* StopTimerTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StopTimerTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXContainerItemProxy section */
+		ST00000000000000000000B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ST0000000000000000000070 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ST0000000000000000000030;
+			remoteInfo = StopTimer;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		ST0000000000000000000002 /* Frameworks */ = {
@@ -29,6 +41,7 @@
 			isa = PBXGroup;
 			children = (
 				ST0000000000000000000001 /* StopTimer */,
+				ST00000000000000000000B1 /* StopTimerTests */,
 				ST0000000000000000000010 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -37,6 +50,7 @@
 			isa = PBXGroup;
 			children = (
 				ST0000000000000000000020 /* StopTimer.app */,
+				ST00000000000000000000B0 /* StopTimerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -64,6 +78,27 @@
 			productReference = ST0000000000000000000020 /* StopTimer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		ST00000000000000000000B2 /* StopTimerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ST00000000000000000000B8 /* Build configuration list for PBXNativeTarget "StopTimerTests" */;
+			buildPhases = (
+				ST00000000000000000000B3 /* Sources */,
+				ST00000000000000000000B4 /* Frameworks */,
+				ST00000000000000000000B5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ST00000000000000000000B6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				ST00000000000000000000B1 /* StopTimerTests */,
+			);
+			name = StopTimerTests;
+			productName = StopTimerTests;
+			productReference = ST00000000000000000000B0 /* StopTimerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -76,6 +111,10 @@
 				TargetAttributes = {
 					ST0000000000000000000030 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					ST00000000000000000000B2 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = ST0000000000000000000030;
 					};
 				};
 			};
@@ -94,12 +133,30 @@
 			projectRoot = "";
 			targets = (
 				ST0000000000000000000030 /* StopTimer */,
+				ST00000000000000000000B2 /* StopTimerTests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		ST00000000000000000000B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXResourcesBuildPhase section */
 		ST0000000000000000000060 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ST00000000000000000000B5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -116,7 +173,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ST00000000000000000000B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ST00000000000000000000B6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ST0000000000000000000030 /* StopTimer */;
+			targetProxy = ST00000000000000000000B7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		ST0000000000000000000090 /* Debug */ = {
@@ -292,6 +364,44 @@
 			};
 			name = Release;
 		};
+		ST00000000000000000000B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KR2G4P6S72;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stoptimer.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StopTimer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StopTimer";
+			};
+			name = Debug;
+		};
+		ST00000000000000000000BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KR2G4P6S72;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stoptimer.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StopTimer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StopTimer";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -300,6 +410,15 @@
 			buildConfigurations = (
 				ST00000000000000000000A0 /* Debug */,
 				ST00000000000000000000A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ST00000000000000000000B8 /* Build configuration list for PBXNativeTarget "StopTimerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ST00000000000000000000B9 /* Debug */,
+				ST00000000000000000000BA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
