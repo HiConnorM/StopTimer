@@ -36,4 +36,9 @@ final class HomeViewModel: ObservableObject {
     var averageErrorText: String {
         p.lifetimeAttempts > 0 ? TimeFormatting.seconds(p.averageError) : "—"
     }
+
+    // Stage ladder
+    var currentStageNumber: Int { p.highestUnlockedStage }
+    var currentStage: StageLevel { StageCatalog.stage(currentStageNumber) }
+    var equippedTitle: String? { progressStore.equippedTitle }
 }

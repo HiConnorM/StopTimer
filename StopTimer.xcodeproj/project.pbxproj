@@ -6,16 +6,6 @@
 	objectVersion = 70;
 	objects = {
 
-/* Begin PBXFileReference section */
-		ST0000000000000000000020 /* StopTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StopTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		ST00000000000000000000B0 /* StopTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StopTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		ST0000000000000000000001 /* StopTimer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StopTimer; sourceTree = "<group>"; };
-		ST00000000000000000000B1 /* StopTimerTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StopTimerTests; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXContainerItemProxy section */
 		ST00000000000000000000B7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -26,8 +16,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXFileReference section */
+		ST0000000000000000000020 /* StopTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StopTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ST00000000000000000000B0 /* StopTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StopTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		ST0000000000000000000001 /* StopTimer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StopTimer; sourceTree = "<group>"; };
+		ST00000000000000000000B1 /* StopTimerTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StopTimerTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		ST0000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ST00000000000000000000B4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -137,16 +144,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		ST00000000000000000000B4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
 		ST0000000000000000000060 /* Resources */ = {
@@ -414,20 +411,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ST00000000000000000000B8 /* Build configuration list for PBXNativeTarget "StopTimerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				ST00000000000000000000B9 /* Debug */,
-				ST00000000000000000000BA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		ST0000000000000000000080 /* Build configuration list for PBXProject "StopTimer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				ST0000000000000000000090 /* Debug */,
 				ST0000000000000000000091 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ST00000000000000000000B8 /* Build configuration list for PBXNativeTarget "StopTimerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ST00000000000000000000B9 /* Debug */,
+				ST00000000000000000000BA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

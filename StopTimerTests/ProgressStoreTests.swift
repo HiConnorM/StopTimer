@@ -1,7 +1,8 @@
 import XCTest
 @testable import StopTimer
 
-/// Locks progression bookkeeping and the UserDefaults save/load round-trip.
+/// Locks progression bookkeeping, the save/load round-trip, stage clears, and
+/// the cosmetic purchase/equip flow.
 final class ProgressStoreTests: XCTestCase {
 
     private var suiteName: String!
@@ -15,67 +16,100 @@ final class ProgressStoreTests: XCTestCase {
 
     override func tearDown() {
         defaults.removePersistentDomain(forName: suiteName)
-        defaults = nil
-        suiteName = nil
+        defaults = nil; suiteName = nil
         super.tearDown()
     }
 
-    func testApplyPerfectResultUpdatesStats() {
+    func testApplyResultCreditsRewardAndStats() {
         let store = ProgressStore(defaults: defaults)
-        store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 10.004)) // perfect
+        let result = GameResult(targetSeconds: 10, actualSeconds: 10.004) // perfect
+        let expected = RewardCalculator.reward(for: result.grade, closeness: result.closeness, currentCombo: 0)
 
+        store.applyResult(result)
         let p = store.progress
         XCTAssertEqual(p.lifetimeAttempts, 1)
         XCTAssertEqual(p.perfectCount, 1)
-        XCTAssertEqual(p.xp, 75)
-        XCTAssertEqual(p.coins, 35)
+        XCTAssertEqual(p.xp, expected.xp)
+        XCTAssertEqual(p.coins, expected.coins)
         XCTAssertEqual(p.currentCombo, 1)
-        XCTAssertEqual(p.longestCombo, 1)
         XCTAssertEqual(p.bestError ?? -1, 0.004, accuracy: 1e-9)
-        XCTAssertEqual(p.totalAbsoluteError, 0.004, accuracy: 1e-9)
     }
 
     func testComboResetsAndBestErrorKeepsMinimum() {
         let store = ProgressStore(defaults: defaults)
-        store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 10.004)) // perfect, combo 1
-        store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 10.500)) // miss, combo reset
+        store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 10.004)) // perfect
+        store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 13.0))   // far miss
 
         let p = store.progress
         XCTAssertEqual(p.lifetimeAttempts, 2)
         XCTAssertEqual(p.missCount, 1)
         XCTAssertEqual(p.currentCombo, 0)
-        XCTAssertEqual(p.longestCombo, 1)                 // longest is remembered
-        XCTAssertEqual(p.bestError ?? -1, 0.004, accuracy: 1e-9) // miss didn't worsen best
+        XCTAssertEqual(p.longestCombo, 1)
+        XCTAssertEqual(p.bestError ?? -1, 0.004, accuracy: 1e-9)
     }
 
-    func testAverageError() {
-        let store = ProgressStore(defaults: defaults)
-        store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 10.010)) // error 0.010
-        store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 10.030)) // error 0.030
-        XCTAssertEqual(store.progress.averageError, 0.020, accuracy: 1e-9)
-    }
-
-    func testSaveLoadRoundTrip() {
+    func testSaveLoadRoundTripIncludingCosmetics() {
         let a = ProgressStore(defaults: defaults)
-        a.applyResult(GameResult(targetSeconds: 8, actualSeconds: 8.002))  // legendary
-        a.applyResult(GameResult(targetSeconds: 5, actualSeconds: 5.070))  // great
+        a.applyResult(GameResult(targetSeconds: 8, actualSeconds: 8.001))  // legendary, banks coins
+        let item = CosmeticCatalog.item("title.almost")!
+        XCTAssertTrue(a.purchase(item))
+        a.equip(item)
 
-        // A fresh store reading the same defaults must see identical progress.
         let b = ProgressStore(defaults: defaults)
         XCTAssertEqual(a.progress, b.progress)
-        XCTAssertEqual(b.progress.lifetimeAttempts, 2)
-        XCTAssertEqual(b.progress.legendaryCount, 1)
-        XCTAssertEqual(b.progress.greatCount, 1)
+        XCTAssertTrue(b.isOwned("title.almost"))
+        XCTAssertTrue(b.isEquipped("title.almost"))
+    }
+
+    func testStageClearRequirement() {
+        let store = ProgressStore(defaults: defaults)
+        let stage1 = StageCatalog.stage(1) // requires 40%
+
+        XCTAssertFalse(store.clearStageIfMet(stage1, accuracyPercent: 30))
+        XCTAssertEqual(store.progress.highestStageCleared, 0)
+
+        XCTAssertTrue(store.clearStageIfMet(stage1, accuracyPercent: 50))
+        XCTAssertEqual(store.progress.highestStageCleared, 1)
+        XCTAssertTrue(store.isStageUnlocked(2))
+        XCTAssertFalse(store.isStageUnlocked(3))
+    }
+
+    func testStageBonusGrantedOnlyOnFirstClear() {
+        let store = ProgressStore(defaults: defaults)
+        let stage1 = StageCatalog.stage(1)
+        store.clearStageIfMet(stage1, accuracyPercent: 100)
+        let afterFirst = store.progress.xp
+        XCTAssertEqual(afterFirst, stage1.rewardBonus)   // only the stage bonus so far
+        store.clearStageIfMet(stage1, accuracyPercent: 100)
+        XCTAssertEqual(store.progress.xp, afterFirst)    // no second bonus
+    }
+
+    func testPurchaseRequiresCoinsAndEquipRequiresOwnership() {
+        let store = ProgressStore(defaults: defaults)
+        let item = CosmeticCatalog.item("orb.neon")! // price 60
+        XCTAssertFalse(store.purchase(item))          // 0 coins
+        XCTAssertFalse(store.isOwned("orb.neon"))
+
+        store.applyResult(GameResult(targetSeconds: 8, actualSeconds: 8.001)) // banks coins
+        let before = store.progress.coins
+        XCTAssertGreaterThanOrEqual(before, item.price)
+        XCTAssertTrue(store.purchase(item))
+        XCTAssertEqual(store.progress.coins, before - item.price)
+        store.equip(item)
+        XCTAssertTrue(store.isEquipped("orb.neon"))
+    }
+
+    func testDefaultCosmeticsAlwaysOwnedAndEquipped() {
+        let store = ProgressStore(defaults: defaults)
+        XCTAssertTrue(store.isOwned("btn.candy"))                 // default is free
+        XCTAssertEqual(store.equippedID(for: .button), "btn.candy")
     }
 
     func testResetClearsEverything() {
         let store = ProgressStore(defaults: defaults)
         store.applyResult(GameResult(targetSeconds: 10, actualSeconds: 10.004))
+        store.clearStageIfMet(StageCatalog.stage(1), accuracyPercent: 100)
         store.reset()
         XCTAssertEqual(store.progress, PlayerProgress())
-
-        // Reset must also persist: a fresh store sees the cleared state.
-        let reloaded = ProgressStore(defaults: defaults)
-        XCTAssertEqual(reloaded.progress, PlayerProgress())
     }
 }

@@ -21,12 +21,12 @@ struct ProfileView: View {
                     levelHeader
 
                     LazyVGrid(columns: columns, spacing: 14) {
-                        StatCard(label: "Best Error", value: vm.bestErrorText, systemImage: "target")
-                        StatCard(label: "Avg Error", value: vm.averageErrorText, systemImage: "chart.line.downtrend.xyaxis")
+                        StatCard(label: "Best Error", value: vm.bestErrorText, systemImage: "target", tint: Constants.Theme.accent)
+                        StatCard(label: "Avg Error", value: vm.averageErrorText, systemImage: "chart.line.downtrend.xyaxis", tint: Constants.Theme.mint)
+                        StatCard(label: "Stages Cleared", value: "\(vm.highestStageCleared)", systemImage: "flag.checkered", tint: Constants.Theme.green)
                         StatCard(label: "Perfects", value: "\(vm.perfectCount)", systemImage: "star.fill", tint: Constants.Theme.coin)
-                        StatCard(label: "Legendary", value: "\(vm.legendaryCount)", systemImage: "crown.fill", tint: Constants.Theme.coin)
-                        StatCard(label: "Longest Combo", value: "\(vm.longestCombo)", systemImage: "flame.fill", tint: .orange)
-                        StatCard(label: "Attempts", value: "\(vm.lifetimeAttempts)", systemImage: "number")
+                        StatCard(label: "Legendary", value: "\(vm.legendaryCount)", systemImage: "crown.fill", tint: Constants.Theme.purple)
+                        StatCard(label: "Longest Combo", value: "\(vm.longestCombo)", systemImage: "flame.fill", tint: Constants.Theme.orange)
                     }
                 }
                 .padding(20)
@@ -44,6 +44,11 @@ struct ProfileView: View {
                     Text("\(vm.playerLevel)")
                         .font(.system(size: 44, weight: .black, design: .rounded))
                         .foregroundStyle(Constants.Theme.textPrimary)
+                    if let title = vm.equippedTitle {
+                        Text("“\(title)”")
+                            .font(.system(.footnote, design: .rounded).weight(.bold))
+                            .foregroundStyle(Constants.Theme.purple)
+                    }
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 6) {

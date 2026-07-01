@@ -5,6 +5,7 @@ import SwiftUI
 /// Honors reduced motion by skipping the animations.
 struct GradeBadge: View {
     let grade: AccuracyGrade
+    var burstColor: Color? = nil
     var reducedMotion: Bool = false
 
     @State private var shown = false
@@ -15,7 +16,7 @@ struct GradeBadge: View {
     var body: some View {
         ZStack {
             if isTopTier {
-                CelebrationView(color: grade.color, reducedMotion: reducedMotion)
+                CelebrationView(color: burstColor ?? grade.color, reducedMotion: reducedMotion)
             }
             VStack(spacing: 8) {
                 Image(systemName: grade.symbolName)

@@ -1,7 +1,7 @@
 import Foundation
 
-/// All persisted player state. Codable so it round-trips to UserDefaults as JSON.
-/// Stored locally only — no backend, no account, nothing that shouldn't live on device.
+/// All persisted player state. Stored locally only (no backend). Uses a custom
+/// decoder with `decodeIfPresent` so adding new fields never wipes an old save.
 struct PlayerProgress: Codable, Equatable {
 
     // Currency & progression
@@ -25,30 +25,30 @@ struct PlayerProgress: Codable, Equatable {
     var closeCount: Int = 0
     var missCount: Int = 0
 
+    // Stage ladder
+    var highestStageCleared: Int = 0
+    var currentStage: Int = 1
+
+    // Cosmetics
+    var ownedCosmeticIDs: [String] = []
+    /// CosmeticType.rawValue -> equipped item id.
+    var equippedCosmetics: [String: String] = [:]
+
+    init() {}
+
     // MARK: Computed (never stored)
 
-    /// Mean absolute error across all attempts. 0 before the first attempt.
     var averageError: Double {
         lifetimeAttempts > 0 ? totalAbsoluteError / Double(lifetimeAttempts) : 0
     }
 
-    /// Player level, derived from XP. Levels start at 1.
-    var playerLevel: Int {
-        xp / Constants.xpPerLevel + 1
-    }
+    var playerLevel: Int { xp / Constants.xpPerLevel + 1 }
+    var xpIntoLevel: Int { xp % Constants.xpPerLevel }
+    var levelProgress: Double { Double(xpIntoLevel) / Double(Constants.xpPerLevel) }
 
-    /// XP accumulated inside the current level (0..<xpPerLevel).
-    var xpIntoLevel: Int {
-        xp % Constants.xpPerLevel
-    }
+    /// The highest stage the player is allowed to attempt.
+    var highestUnlockedStage: Int { highestStageCleared + 1 }
 
-    /// Progress through the current level, 0...1, for the XP bar.
-    var levelProgress: Double {
-        Double(xpIntoLevel) / Double(Constants.xpPerLevel)
-    }
-
-    /// Local, skill-weighted rank placeholder (online rank comes later). Rewards
-    /// low average error and high precision count, gated lightly by experience.
     var rank: String {
         guard lifetimeAttempts >= 5 else { return "Unranked" }
         let precise = legendaryCount + perfectCount
@@ -63,5 +63,28 @@ struct PlayerProgress: Codable, Equatable {
         case (..<0.220, _):                     return "Silver"
         default:                                return "Bronze"
         }
+    }
+
+    // MARK: Forward-compatible Codable
+
+    enum CodingKeys: String, CodingKey {
+        case xp, coins, currentCombo, longestCombo, lifetimeAttempts, bestError, totalAbsoluteError
+        case legendaryCount, perfectCount, excellentCount, greatCount, goodCount, closeCount, missCount
+        case highestStageCleared, currentStage, ownedCosmeticIDs, equippedCosmetics
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        func i(_ k: CodingKeys) -> Int { (try? c.decodeIfPresent(Int.self, forKey: k)) ?? 0 }
+        xp = i(.xp); coins = i(.coins); currentCombo = i(.currentCombo); longestCombo = i(.longestCombo)
+        lifetimeAttempts = i(.lifetimeAttempts)
+        bestError = (try? c.decodeIfPresent(Double.self, forKey: .bestError)) ?? nil
+        totalAbsoluteError = (try? c.decodeIfPresent(Double.self, forKey: .totalAbsoluteError)) ?? 0
+        legendaryCount = i(.legendaryCount); perfectCount = i(.perfectCount); excellentCount = i(.excellentCount)
+        greatCount = i(.greatCount); goodCount = i(.goodCount); closeCount = i(.closeCount); missCount = i(.missCount)
+        highestStageCleared = i(.highestStageCleared)
+        currentStage = max(1, i(.currentStage))
+        ownedCosmeticIDs = (try? c.decodeIfPresent([String].self, forKey: .ownedCosmeticIDs)) ?? []
+        equippedCosmetics = (try? c.decodeIfPresent([String: String].self, forKey: .equippedCosmetics)) ?? [:]
     }
 }

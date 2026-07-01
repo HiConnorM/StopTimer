@@ -37,4 +37,6 @@ final class ProfileViewModel: ObservableObject {
     }
 
     var rankTitle: String { p.rank }
+    var equippedTitle: String? { progressStore.equippedTitle }
+    var highestStageCleared: Int { p.highestStageCleared }
 }

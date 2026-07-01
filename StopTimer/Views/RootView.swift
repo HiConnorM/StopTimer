@@ -1,37 +1,29 @@
 import SwiftUI
 
-/// App shell: bottom-tab navigation (Play / Profile / Settings). The Play tab is
-/// the Home screen; tapping Play presents the gameplay flow full-screen.
+/// App shell: bottom-tab navigation (Play / Store / Profile / Settings). The
+/// gameplay flow is presented full-screen from within the Play (Home) tab.
 struct RootView: View {
     let progressStore: ProgressStore
     let settingsVM: SettingsViewModel
     let haptics: HapticsManager
 
-    @State private var showingGame = false
-    @State private var selectedTab = 0
+    @State private var tab = 0
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            HomeView(progressStore: progressStore, onPlay: { showingGame = true })
-                .tabItem { Label("Play", systemImage: "play.fill") }
-                .tag(0)
+        TabView(selection: $tab) {
+            HomeView(progressStore: progressStore, haptics: haptics)
+                .tabItem { Label("Play", systemImage: "play.fill") }.tag(0)
+
+            StoreView()
+                .tabItem { Label("Store", systemImage: "bag.fill") }.tag(1)
 
             ProfileView(progressStore: progressStore)
-                .tabItem { Label("Profile", systemImage: "person.fill") }
-                .tag(1)
+                .tabItem { Label("Profile", systemImage: "person.fill") }.tag(2)
 
             SettingsView()
-                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
-                .tag(2)
+                .tabItem { Label("Settings", systemImage: "gearshape.fill") }.tag(3)
         }
         .tint(Constants.Theme.accent)
-        .preferredColorScheme(.dark)
-        .fullScreenCover(isPresented: $showingGame) {
-            GameView(progressStore: progressStore,
-                     haptics: haptics,
-                     onHome: { showingGame = false })
-                .environmentObject(settingsVM)
-                .preferredColorScheme(.light)
-        }
+        .preferredColorScheme(.light)
     }
 }

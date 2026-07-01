@@ -38,5 +38,14 @@ enum Constants {
         // Fun accents for stats / coins.
         static let coin          = Color(red: 0.98, green: 0.74, blue: 0.12)
         static let mint          = Color(red: 0.18, green: 0.78, blue: 0.55)
+
+        // Vibrant "Blockout"-style palette used for categories, meters, cosmetics.
+        static let blue    = Color(red: 0.20, green: 0.55, blue: 0.98)
+        static let purple  = Color(red: 0.58, green: 0.35, blue: 0.96)
+        static let pink    = Color(red: 0.96, green: 0.30, blue: 0.62)
+        static let green   = Color(red: 0.22, green: 0.80, blue: 0.44)
+        static let teal    = Color(red: 0.10, green: 0.72, blue: 0.72)
+        static let orange  = Color(red: 0.98, green: 0.55, blue: 0.15)
+        static let yellow  = Color(red: 0.99, green: 0.80, blue: 0.16)
     }
 }

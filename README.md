@@ -111,17 +111,29 @@ xcodebuild test -project StopTimer.xcodeproj -scheme StopTimer \
   -destination 'platform=iOS Simulator,name=iPhone 17' CODE_SIGNING_ALLOWED=NO
 ```
 
+## Progression, store & stages
+
+- **Closeness rewards** — every stop earns XP/coins scaled by `GameResult.closeness`
+  (`maxRewardWindow = max(0.75, target*0.12)`), plus a grade bonus. Result screen shows an
+  "% Accurate" meter and an encouraging line on near misses.
+- **Stage ladder** — `StageCatalog` builds each stage deterministically (target, required accuracy,
+  distraction level, bonus XP). Clear a stage by hitting its required accuracy to unlock the next.
+  Pick stages from Home → Choose Stage.
+- **Store** — spend coins on cosmetics (orbs, backgrounds, buttons, result effects, titles). Owned
+  + equipped state is saved locally in `PlayerProgress` (forward-compatible `Codable`). The default
+  button stays candy red.
+- **Distractions** — higher stages layer escalating, purely-decorative effects
+  (`DistractionOverlayView`), never blocking the Stop orb and fully disabled under Reduced Motion.
+
 ## What to build next
 
-1. **Modes** — Endless (3 lives), Ladder (10 stages), Zen, local Daily; introduce a `GameMode` enum
-   and a `ModesView` once two modes share a shape.
-2. **Profile depth** — achievements, daily streak, richer rank surfacing.
-3. **Cosmetics scaffolding** — themes / orb skins / titles, equipped ids saved locally (no store).
-4. **Beta** — TestFlight, screenshots, App Store copy.
+1. **More modes** — Endless (lives), Zen, local Daily on top of the stage ladder.
+2. **Profile depth** — achievements, daily streak.
+3. **Beta** — TestFlight, screenshots, App Store copy.
 
-Already in: bright-arcade UI + rich home hub, difficulty-ramped whole-number targets, glossy 3D
-buttons, tap-the-orb-to-stop, grade-based haptics, result juice (pop-in, glow, miss shake, combo
-pop), native share, and unit tests.
+Already in: bright-arcade UI + rich home hub, stage ladder, closeness-based rewards + accuracy meter,
+cosmetic store, distractions, difficulty-ramped targets, glossy 3D buttons, tap-the-orb-to-stop,
+grade-based haptics, result juice, native share, and unit tests.
 
 Deliberately **not** in this MVP: backend, accounts, cloud save, Game Center, leaderboards, ads,
 IAP/StoreKit, multiplayer, push, season pass.

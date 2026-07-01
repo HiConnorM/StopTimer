@@ -1,12 +1,16 @@
 import SwiftUI
 
 /// The glowing orb shown while the timer is hidden. Pulses to give the running
-/// state life without revealing any timing information. Honors reduced motion.
+/// state life without revealing any timing information. Colors come from the
+/// equipped orb cosmetic. Honors reduced motion.
 struct TimerOrbView: View {
-    var tint: Color = Constants.Theme.accent
+    var colors: [Color] = [Constants.Theme.accent, Constants.Theme.accentDark]
     var reducedMotion: Bool = false
 
     @State private var pulse = false
+
+    private var primary: Color { colors.first ?? Constants.Theme.accent }
+    private var secondary: Color { colors.last ?? Constants.Theme.accentDark }
 
     var body: some View {
         ZStack {
@@ -14,14 +18,14 @@ struct TimerOrbView: View {
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [tint.opacity(0.35), tint.opacity(0.0)],
+                        colors: [primary.opacity(0.35), primary.opacity(0.0)],
                         center: .center, startRadius: 10, endRadius: 150
                     )
                 )
             // Glossy core.
             Circle()
                 .fill(
-                    LinearGradient(colors: [tint, Constants.Theme.accentDark],
+                    LinearGradient(colors: [primary, secondary],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
                 .padding(26)
@@ -33,7 +37,7 @@ struct TimerOrbView: View {
                 )
         }
         .frame(width: 230, height: 230)
-        .shadow(color: tint.opacity(0.45), radius: 30, y: 8)
+        .shadow(color: primary.opacity(0.45), radius: 30, y: 8)
         .scaleEffect(pulse ? 1.07 : 0.93)
         .onAppear {
             guard !reducedMotion else { return }
