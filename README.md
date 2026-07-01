@@ -146,9 +146,10 @@ the Store, shown on your Profile.
 ## Game modes & juice
 
 - **Modes** (`GameMode`, chosen from the Home "Game Modes" grid): **Classic** (stage ladder),
-  **Endless** (3 lives — Close/Miss costs a life, streak grows on Good+), and **Tap Rush** (mash the
-  button for 5s; score = tap count, best saved). Each mode flow is its own view model; per-round
-  precision still feeds lifetime stats/achievements.
+  **Endless** (3 lives — Close/Miss costs a life, streak grows on Good+), **Tap Rush** (mash the
+  button for 5s; score = tap count), **Blitz** (7 short 1–4s targets, score = total accuracy), and
+  **Perfect Hunt** (retry one target until Perfect/Legendary; score = fewest attempts). Each mode
+  flow is its own view model with a saved best; per-round precision still feeds stats/achievements.
 - **Look** — glossy "casual mobile" pill buttons (`GlossyPillStyle`: saturated gradient, bold dark
   outline, diagonal shine) plus glossy mode cards.
 - **Juice** — full-screen `ConfettiView` on wins (stage clear, top grade, new best, achievement),
@@ -156,7 +157,7 @@ the Store, shown on your Profile.
 
 ## What to build next
 
-1. **More modes** — Blitz (1–4s), Perfect Hunt, Daily Global on the same `GameMode` plumbing.
+1. **Daily Global** — one shared target/set per day on the same `GameMode` plumbing.
 2. **Ranked + seasons** — 10-round sets scored by average accuracy + consistency; weekly resets with
    seasonal prestige cosmetics (reuses the achievement/prestige plumbing).
 3. **Make the leaderboard real** — a `GameCenterLeaderboardService` (or backend) behind the existing

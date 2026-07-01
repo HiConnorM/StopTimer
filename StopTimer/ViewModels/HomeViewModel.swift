@@ -45,4 +45,6 @@ final class HomeViewModel: ObservableObject {
     // Mode bests
     var endlessBest: Int { p.endlessBest }
     var bestTapCount: Int { p.bestTapCount }
+    var blitzBest: Int { p.blitzBest }
+    var perfectHuntBestText: String { p.perfectHuntBest == 0 ? "Best: —" : "Best: \(p.perfectHuntBest) tries" }
 }

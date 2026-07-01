@@ -38,6 +38,9 @@ struct PlayerProgress: Codable, Equatable {
     // Mode bests
     var endlessBest: Int = 0
     var bestTapCount: Int = 0
+    var blitzBest: Int = 0
+    /// Fewest attempts to hit Perfect in Perfect Hunt (lower is better; 0 = none yet).
+    var perfectHuntBest: Int = 0
 
     // Cosmetics & achievements
     var ownedCosmeticIDs: [String] = []
@@ -91,7 +94,7 @@ struct PlayerProgress: Codable, Equatable {
         case xp, coins, currentCombo, longestCombo, lifetimeAttempts, bestError, totalAbsoluteError
         case legendaryCount, perfectCount, excellentCount, greatCount, goodCount, closeCount, missCount
         case currentPerfectStreak, bestPerfectStreak, currentNoMissStreak, bestNoMissStreak
-        case highestStageCleared, currentStage, endlessBest, bestTapCount
+        case highestStageCleared, currentStage, endlessBest, bestTapCount, blitzBest, perfectHuntBest
         case ownedCosmeticIDs, equippedCosmetics, earnedAchievementIDs
     }
 
@@ -110,6 +113,8 @@ struct PlayerProgress: Codable, Equatable {
         currentStage = max(1, i(.currentStage))
         endlessBest = i(.endlessBest)
         bestTapCount = i(.bestTapCount)
+        blitzBest = i(.blitzBest)
+        perfectHuntBest = i(.perfectHuntBest)
         ownedCosmeticIDs = (try? c.decodeIfPresent([String].self, forKey: .ownedCosmeticIDs)) ?? []
         equippedCosmetics = (try? c.decodeIfPresent([String: String].self, forKey: .equippedCosmetics)) ?? [:]
         earnedAchievementIDs = (try? c.decodeIfPresent([String].self, forKey: .earnedAchievementIDs)) ?? []

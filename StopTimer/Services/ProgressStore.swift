@@ -97,6 +97,32 @@ final class ProgressStore: ObservableObject {
         return isBest
     }
 
+    /// Credits a Blitz run (total accuracy score) and updates the best.
+    @discardableResult
+    func recordBlitz(score: Int) -> Bool {
+        var p = progress
+        let isBest = score > p.blitzBest
+        if isBest { p.blitzBest = score }
+        p.xp += score / 2
+        p.coins += score / 20
+        progress = p
+        save()
+        return isBest
+    }
+
+    /// Credits a Perfect Hunt win (fewer attempts is better) and updates the best.
+    @discardableResult
+    func recordPerfectHunt(attempts: Int) -> Bool {
+        var p = progress
+        let isBest = p.perfectHuntBest == 0 || attempts < p.perfectHuntBest
+        if isBest { p.perfectHuntBest = attempts }
+        p.xp += 60
+        p.coins += 20
+        progress = p
+        save()
+        return isBest
+    }
+
     // MARK: Stages
 
     func isStageUnlocked(_ n: Int) -> Bool { n <= progress.highestUnlockedStage }

@@ -14,12 +14,14 @@ struct HomeView: View {
 
     /// Which mode flow is currently presented full-screen.
     enum ActiveGame: Identifiable {
-        case classic(StageLevel), endless, tapRush
+        case classic(StageLevel), endless, tapRush, blitz, perfectHunt
         var id: String {
             switch self {
             case .classic(let s): return "classic-\(s.stageNumber)"
             case .endless: return "endless"
             case .tapRush: return "tapRush"
+            case .blitz: return "blitz"
+            case .perfectHunt: return "perfectHunt"
             }
         }
     }
@@ -76,6 +78,12 @@ struct HomeView: View {
         case .tapRush:
             TapRushView(progressStore: progressStore, haptics: haptics,
                         onHome: { activeGame = nil })
+        case .blitz:
+            BlitzGameView(progressStore: progressStore, haptics: haptics,
+                          onHome: { activeGame = nil })
+        case .perfectHunt:
+            PerfectHuntView(progressStore: progressStore, haptics: haptics,
+                            onHome: { activeGame = nil })
         }
     }
 
@@ -89,6 +97,8 @@ struct HomeView: View {
             LazyVGrid(columns: columns, spacing: 12) {
                 ModeCardView(mode: .endless, bestText: "Best: \(vm.endlessBest)") { activeGame = .endless }
                 ModeCardView(mode: .tapRush, bestText: "Best: \(vm.bestTapCount)") { activeGame = .tapRush }
+                ModeCardView(mode: .blitz, bestText: "Best: \(vm.blitzBest)") { activeGame = .blitz }
+                ModeCardView(mode: .perfectHunt, bestText: vm.perfectHuntBestText) { activeGame = .perfectHunt }
             }
             Button(action: { showStages = true }) {
                 HStack {

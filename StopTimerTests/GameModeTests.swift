@@ -41,14 +41,36 @@ final class GameModeTests: XCTestCase {
         XCTAssertEqual(store.progress.endlessBest, 7)
     }
 
+    func testBlitzTracksHighestScore() {
+        let store = ProgressStore(defaults: defaults)
+        XCTAssertTrue(store.recordBlitz(score: 500))
+        XCTAssertEqual(store.progress.blitzBest, 500)
+        XCTAssertFalse(store.recordBlitz(score: 420))
+        XCTAssertTrue(store.recordBlitz(score: 610))
+        XCTAssertEqual(store.progress.blitzBest, 610)
+    }
+
+    func testPerfectHuntTracksFewestAttempts() {
+        let store = ProgressStore(defaults: defaults)
+        XCTAssertTrue(store.recordPerfectHunt(attempts: 8))   // first is a best
+        XCTAssertEqual(store.progress.perfectHuntBest, 8)
+        XCTAssertFalse(store.recordPerfectHunt(attempts: 12)) // more attempts = not better
+        XCTAssertTrue(store.recordPerfectHunt(attempts: 3))   // fewer attempts = new best
+        XCTAssertEqual(store.progress.perfectHuntBest, 3)
+    }
+
     func testModeBestsPersist() {
         let a = ProgressStore(defaults: defaults)
         a.recordTapRush(taps: 33)
         a.recordEndless(streak: 9)
+        a.recordBlitz(score: 480)
+        a.recordPerfectHunt(attempts: 5)
 
         let b = ProgressStore(defaults: defaults)
         XCTAssertEqual(b.progress.bestTapCount, 33)
         XCTAssertEqual(b.progress.endlessBest, 9)
+        XCTAssertEqual(b.progress.blitzBest, 480)
+        XCTAssertEqual(b.progress.perfectHuntBest, 5)
     }
 
     func testAllModesHaveMetadata() {
