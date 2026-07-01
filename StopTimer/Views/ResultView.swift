@@ -9,6 +9,7 @@ struct ResultView: View {
     let stageCleared: Bool
     let leveledUp: Bool
     let newUnlocks: [CosmeticItem]
+    var newAchievements: [Achievement] = []
     var reducedMotion: Bool = false
     let onRetry: () -> Void
     let onNext: () -> Void
@@ -28,6 +29,10 @@ struct ResultView: View {
                 stageBanner
                 AccuracyMeterView(accuracyPercent: result.accuracyPercent, reducedMotion: reducedMotion)
                     .padding(.horizontal, 30)
+
+                if !newAchievements.isEmpty {
+                    achievementsCard.modifier(PopIn(shown: cardsIn, delay: 0.02, reducedMotion: reducedMotion))
+                }
 
                 metricsCard.modifier(PopIn(shown: cardsIn, delay: 0.05, reducedMotion: reducedMotion))
                 rewardsCard.modifier(PopIn(shown: cardsIn, delay: 0.11, reducedMotion: reducedMotion))
@@ -124,6 +129,43 @@ struct ResultView: View {
             .frame(height: 10)
         }
         .padding(.horizontal, 28)
+    }
+
+    private var achievementsCard: some View {
+        VStack(spacing: 10) {
+            Text("ACHIEVEMENT UNLOCKED")
+                .font(.system(.caption, design: .rounded).weight(.black))
+                .tracking(2)
+                .foregroundStyle(.white)
+            ForEach(newAchievements) { a in
+                HStack(spacing: 12) {
+                    Image(systemName: a.symbol)
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                        .frame(width: 44, height: 44)
+                        .background(.white.opacity(0.22), in: Circle())
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(a.name)
+                            .font(.system(.headline, design: .rounded).weight(.heavy))
+                            .foregroundStyle(.white)
+                        if let reward = CosmeticCatalog.item(a.unlocksCosmeticID) {
+                            Text("Unlocked \(reward.type.displayName.dropLast()): \(reward.name)")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.9))
+                        }
+                    }
+                    Spacer()
+                }
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .background(
+            LinearGradient(colors: [Constants.Theme.coin, Constants.Theme.orange],
+                           startPoint: .topLeading, endPoint: .bottomTrailing),
+            in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: Constants.Theme.orange.opacity(0.45), radius: 14, y: 6)
+        .padding(.horizontal, 24)
     }
 
     private var unlocksCard: some View {

@@ -25,14 +25,21 @@ struct PlayerProgress: Codable, Equatable {
     var closeCount: Int = 0
     var missCount: Int = 0
 
+    // Streaks (for prestige achievements)
+    var currentPerfectStreak: Int = 0
+    var bestPerfectStreak: Int = 0
+    var currentNoMissStreak: Int = 0
+    var bestNoMissStreak: Int = 0
+
     // Stage ladder
     var highestStageCleared: Int = 0
     var currentStage: Int = 1
 
-    // Cosmetics
+    // Cosmetics & achievements
     var ownedCosmeticIDs: [String] = []
     /// CosmeticType.rawValue -> equipped item id.
     var equippedCosmetics: [String: String] = [:]
+    var earnedAchievementIDs: [String] = []
 
     init() {}
 
@@ -79,7 +86,8 @@ struct PlayerProgress: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case xp, coins, currentCombo, longestCombo, lifetimeAttempts, bestError, totalAbsoluteError
         case legendaryCount, perfectCount, excellentCount, greatCount, goodCount, closeCount, missCount
-        case highestStageCleared, currentStage, ownedCosmeticIDs, equippedCosmetics
+        case currentPerfectStreak, bestPerfectStreak, currentNoMissStreak, bestNoMissStreak
+        case highestStageCleared, currentStage, ownedCosmeticIDs, equippedCosmetics, earnedAchievementIDs
     }
 
     init(from decoder: Decoder) throws {
@@ -91,9 +99,12 @@ struct PlayerProgress: Codable, Equatable {
         totalAbsoluteError = (try? c.decodeIfPresent(Double.self, forKey: .totalAbsoluteError)) ?? 0
         legendaryCount = i(.legendaryCount); perfectCount = i(.perfectCount); excellentCount = i(.excellentCount)
         greatCount = i(.greatCount); goodCount = i(.goodCount); closeCount = i(.closeCount); missCount = i(.missCount)
+        currentPerfectStreak = i(.currentPerfectStreak); bestPerfectStreak = i(.bestPerfectStreak)
+        currentNoMissStreak = i(.currentNoMissStreak); bestNoMissStreak = i(.bestNoMissStreak)
         highestStageCleared = i(.highestStageCleared)
         currentStage = max(1, i(.currentStage))
         ownedCosmeticIDs = (try? c.decodeIfPresent([String].self, forKey: .ownedCosmeticIDs)) ?? []
         equippedCosmetics = (try? c.decodeIfPresent([String: String].self, forKey: .equippedCosmetics)) ?? [:]
+        earnedAchievementIDs = (try? c.decodeIfPresent([String].self, forKey: .earnedAchievementIDs)) ?? []
     }
 }

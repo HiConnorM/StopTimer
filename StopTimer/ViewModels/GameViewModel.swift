@@ -20,6 +20,7 @@ final class GameViewModel: ObservableObject {
     @Published private(set) var lastStageCleared = false
     @Published private(set) var lastLeveledUp = false
     @Published private(set) var newUnlocks: [CosmeticItem] = []
+    @Published private(set) var newAchievements: [Achievement] = []
 
     private let timer = PrecisionTimer()
     private let progressStore: ProgressStore
@@ -55,6 +56,7 @@ final class GameViewModel: ObservableObject {
         lastResult = result
         lastReward = progressStore.applyResult(result)
         lastStageCleared = progressStore.clearStageIfMet(stage, accuracyPercent: result.accuracyPercent)
+        newAchievements = progressStore.refreshAchievements()
 
         lastLeveledUp = progressStore.progress.playerLevel > levelBefore
         let unlockableAfter = progressStore.availableUnlockableIDs()
@@ -86,5 +88,6 @@ final class GameViewModel: ObservableObject {
         lastStageCleared = false
         lastLeveledUp = false
         newUnlocks = []
+        newAchievements = []
     }
 }

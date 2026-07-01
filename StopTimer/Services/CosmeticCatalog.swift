@@ -13,6 +13,8 @@ enum CosmeticCatalog {
         .button: "btn.candy",
         .resultEffect: "fx.classic",
         .title: "title.rookie",
+        .badge: "badge.none",
+        .frame: "frame.none",
     ]
 
     static let all: [CosmeticItem] = [
@@ -63,7 +65,42 @@ enum CosmeticCatalog {
                      colors: [Constants.Theme.green], requiredStage: 15),
         CosmeticItem(id: "title.legend", name: "Living Legend", description: "The 0.001 club.", type: .title, price: 300,
                      colors: [Constants.Theme.coin], requiredPlayerLevel: 8),
+
+        // MARK: Prestige titles (earned via achievements — never for sale)
+        prestigeTitle("title.precise", "Precise", "Landed a Perfect.", Constants.Theme.blue),
+        prestigeTitle("title.perfectionist", "Perfectionist", "Best error ≤ 0.010s.", Constants.Theme.mint),
+        prestigeTitle("title.onfire", "On Fire", "5 Perfects in a row.", Constants.Theme.orange),
+        prestigeTitle("title.steady", "Steady Hands", "15 rounds, no Miss.", Constants.Theme.teal),
+        prestigeTitle("title.centurion", "Centurion", "Played 100 rounds.", Constants.Theme.textSecondary),
+
+        // MARK: Badges (default + prestige)
+        CosmeticItem(id: "badge.none", name: "No Badge", description: "Keep it clean.", type: .badge, price: 0,
+                     colors: [Constants.Theme.textSecondary], symbol: "circle.dashed"),
+        prestigeBadge("badge.legend", "Legend", "Scored a Legendary.", Constants.Theme.coin, "crown.fill"),
+        prestigeBadge("badge.club001", "0.001 Club", "Best error ≤ 0.001s.", Constants.Theme.pink, "target"),
+        prestigeBadge("badge.perfect10", "Perfect 10", "10 Perfects in a row.", Constants.Theme.purple, "10.circle.fill"),
+        prestigeBadge("badge.sharpshooter", "Sharpshooter", "25 Perfect stops.", Constants.Theme.green, "scope"),
+        prestigeBadge("badge.apex", "Apex Crown", "Reached Apex rank.", Constants.Theme.pink, "mountain.2.fill"),
+
+        // MARK: Profile frames (default + prestige)
+        CosmeticItem(id: "frame.none", name: "No Frame", description: "Just you.", type: .frame, price: 0,
+                     colors: [Constants.Theme.cardStroke, Constants.Theme.cardStroke]),
+        prestigeFrame("frame.frost", "Frost Frame", "25 rounds, no Miss.", [Constants.Theme.blue, Constants.Theme.teal]),
+        prestigeFrame("frame.bronze", "Bronze Frame", "Cleared Stage 10.", [Color(red: 0.80, green: 0.50, blue: 0.20), Constants.Theme.orange]),
+        prestigeFrame("frame.gold", "Gold Frame", "Cleared Stage 25.", [Constants.Theme.coin, Constants.Theme.yellow]),
     ]
+
+    // MARK: Prestige item builders
+
+    private static func prestigeTitle(_ id: String, _ name: String, _ hint: String, _ color: Color) -> CosmeticItem {
+        CosmeticItem(id: id, name: name, description: hint, type: .title, price: 0, colors: [color], earnedOnly: true)
+    }
+    private static func prestigeBadge(_ id: String, _ name: String, _ hint: String, _ color: Color, _ symbol: String) -> CosmeticItem {
+        CosmeticItem(id: id, name: name, description: hint, type: .badge, price: 0, colors: [color], symbol: symbol, earnedOnly: true)
+    }
+    private static func prestigeFrame(_ id: String, _ name: String, _ hint: String, _ colors: [Color]) -> CosmeticItem {
+        CosmeticItem(id: id, name: name, description: hint, type: .frame, price: 0, colors: colors, earnedOnly: true)
+    }
 
     static func item(_ id: String) -> CosmeticItem? {
         all.first { $0.id == id }

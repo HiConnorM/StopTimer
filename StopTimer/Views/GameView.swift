@@ -33,6 +33,7 @@ struct GameView: View {
                                stageCleared: vm.lastStageCleared,
                                leveledUp: vm.lastLeveledUp,
                                newUnlocks: vm.newUnlocks,
+                               newAchievements: vm.newAchievements,
                                reducedMotion: reducedMotion,
                                onRetry: { vm.retry() },
                                onNext:  { vm.nextStage() },

@@ -32,6 +32,21 @@ final class ProgressStore: ObservableObject {
         p.currentCombo = reward.newCombo
         p.longestCombo = max(p.longestCombo, reward.newCombo)
 
+        // Streaks for prestige achievements.
+        if result.grade == .perfect || result.grade == .legendary {
+            p.currentPerfectStreak += 1
+        } else {
+            p.currentPerfectStreak = 0
+        }
+        p.bestPerfectStreak = max(p.bestPerfectStreak, p.currentPerfectStreak)
+
+        if result.grade == .miss {
+            p.currentNoMissStreak = 0
+        } else {
+            p.currentNoMissStreak += 1
+        }
+        p.bestNoMissStreak = max(p.bestNoMissStreak, p.currentNoMissStreak)
+
         switch result.grade {
         case .legendary: p.legendaryCount += 1
         case .perfect:   p.perfectCount += 1
@@ -72,10 +87,39 @@ final class ProgressStore: ObservableObject {
         return true
     }
 
+    // MARK: Achievements
+
+    func isAchievementEarned(_ id: String) -> Bool { progress.earnedAchievementIDs.contains(id) }
+    var earnedAchievementCount: Int { progress.earnedAchievementIDs.count }
+
+    /// Recomputes earned achievements, persists any new ones, and returns them
+    /// (for the result-screen celebration). Call after applying a round + stage clear.
+    @discardableResult
+    func refreshAchievements() -> [Achievement] {
+        let earnedNow = AchievementCatalog.earnedIDs(for: progress)
+        let already = Set(progress.earnedAchievementIDs)
+        let newIDs = earnedNow.subtracting(already)
+        guard !newIDs.isEmpty else { return [] }
+        var p = progress
+        p.earnedAchievementIDs.append(contentsOf: newIDs)
+        progress = p
+        save()
+        return newIDs.compactMap { AchievementCatalog.achievement($0) }
+    }
+
+    /// True if an earned achievement unlocks this prestige cosmetic.
+    private func isPrestigeUnlocked(_ cosmeticID: String) -> Bool {
+        progress.earnedAchievementIDs.contains {
+            AchievementCatalog.unlockedCosmeticID(forAchievement: $0) == cosmeticID
+        }
+    }
+
     // MARK: Cosmetics — ownership
 
     func isOwned(_ id: String) -> Bool {
-        if CosmeticCatalog.item(id)?.isDefault == true { return true }
+        guard let item = CosmeticCatalog.item(id) else { return false }
+        if item.isDefault { return true }
+        if item.earnedOnly { return isPrestigeUnlocked(id) }
         return progress.ownedCosmeticIDs.contains(id)
     }
 
@@ -84,8 +128,10 @@ final class ProgressStore: ObservableObject {
         return equippedID(for: type) == id
     }
 
-    /// Whether the level/stage requirement (if any) is met.
+    /// Whether the item can currently be equipped/bought. Prestige items are
+    /// available only once earned; others check level/stage requirements.
     func isAvailable(_ item: CosmeticItem) -> Bool {
+        if item.earnedOnly { return isPrestigeUnlocked(item.id) }
         if let lvl = item.requiredPlayerLevel, progress.playerLevel < lvl { return false }
         if let stg = item.requiredStage, progress.highestStageCleared < stg { return false }
         return true
@@ -144,6 +190,18 @@ final class ProgressStore: ObservableObject {
     }
 
     var equippedTitle: String? { equippedItem(.title)?.name }
+
+    /// Equipped badge (nil when "none").
+    var equippedBadge: CosmeticItem? {
+        let item = equippedItem(.badge)
+        return item?.id == CosmeticCatalog.defaultID(for: .badge) ? nil : item
+    }
+
+    /// Equipped profile-frame colours (nil when "none").
+    var equippedFrameColors: [Color]? {
+        let item = equippedItem(.frame)
+        return item?.id == CosmeticCatalog.defaultID(for: .frame) ? nil : item?.colors
+    }
 
     // MARK: Persistence
 

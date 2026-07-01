@@ -133,13 +133,23 @@ players. The UI talks only to the `LeaderboardService` protocol, so it swaps to 
 without touching the view: implement `LeaderboardService` with **Game Center (GameKit)** or a backend
 and inject it into `LeaderboardViewModel`. Until then it's clearly labeled a preview (not truly global).
 
+## Achievements & prestige cosmetics
+
+Money buys style; **skill earns status**. `AchievementCatalog` defines skill-based achievements
+(0.001 Club, Perfect 10, Ice Blooded, Apex Timer, Sharpshooter, …); each grants a **prestige
+cosmetic** (`earnedOnly` title / badge / profile frame) that can never be bought. Streaks
+(`bestPerfectStreak`, `bestNoMissStreak`) are tracked in `PlayerProgress`; `ProgressStore.refreshAchievements()`
+awards new ones after each round and the result screen celebrates them. See the **Achievements**
+screen (Profile → Achievements) for earned/locked state with progress bars; equip badges/frames from
+the Store, shown on your Profile.
+
 ## What to build next
 
-1. **Make the leaderboard real** — a `GameCenterLeaderboardService` (enable the Game Center
-   capability, create the leaderboard in App Store Connect, authenticate `GKLocalPlayer`, submit the
-   rating) or a backend implementation of `LeaderboardService`.
-2. **More modes** — Endless (lives), Zen, local Daily on top of the stage ladder.
-3. **Profile depth** — achievements, daily streak.
+1. **Game modes** — Endless (lives), Blitz (1–4s), Perfect Hunt, Daily Global, on top of the ladder.
+2. **Ranked + seasons** — 10-round sets scored by average accuracy + consistency; weekly resets with
+   seasonal prestige cosmetics (this reuses the achievement/prestige plumbing).
+3. **Make the leaderboard real** — a `GameCenterLeaderboardService` (or backend) behind the existing
+   `LeaderboardService` protocol.
 4. **Beta** — TestFlight, screenshots, App Store copy.
 
 Already in: bright-arcade UI + rich home hub, stage ladder, closeness-based rewards + accuracy meter,

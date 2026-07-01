@@ -39,16 +39,25 @@ struct CosmeticCardView: View {
             .fill(LinearGradient(colors: item.colors.count > 1 ? item.colors : [item.colors.first ?? .gray, .white.opacity(0.4)],
                                  startPoint: .topLeading, endPoint: .bottomTrailing))
             .frame(height: 64)
-            .overlay(
-                Group {
-                    if item.type == .title {
-                        Text("“\(item.name)”")
-                            .font(.system(.footnote, design: .rounded).weight(.bold))
-                            .foregroundStyle(.white)
-                            .shadow(radius: 2)
-                    }
+            .overlay {
+                switch item.type {
+                case .title:
+                    Text("“\(item.name)”")
+                        .font(.system(.footnote, design: .rounded).weight(.bold))
+                        .foregroundStyle(.white).shadow(radius: 2)
+                case .badge:
+                    Image(systemName: item.symbol ?? "rosette")
+                        .font(.title).foregroundStyle(.white).shadow(radius: 2)
+                case .frame:
+                    Circle()
+                        .strokeBorder(LinearGradient(colors: item.colors, startPoint: .topLeading, endPoint: .bottomTrailing),
+                                      lineWidth: 5)
+                        .frame(width: 46, height: 46)
+                        .background(Circle().fill(.white.opacity(0.25)))
+                default:
+                    EmptyView()
                 }
-            )
+            }
     }
 
     @ViewBuilder private var action: some View {
@@ -77,6 +86,7 @@ struct CosmeticCardView: View {
     }
 
     private var requirementText: String {
+        if item.earnedOnly { return "🔒 Earn it" }
         if let lvl = item.requiredPlayerLevel { return "Reach Lv \(lvl)" }
         if let stg = item.requiredStage { return "Clear Stage \(stg)" }
         return "Locked"
