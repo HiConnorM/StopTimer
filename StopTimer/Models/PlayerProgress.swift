@@ -49,6 +49,15 @@ struct PlayerProgress: Codable, Equatable {
     /// The highest stage the player is allowed to attempt.
     var highestUnlockedStage: Int { highestStageCleared + 1 }
 
+    /// Composite leaderboard rating (higher = better): stage progression, plus a
+    /// precision bonus from best error, plus a little from perfect/legendary count.
+    var leaderboardRating: Int {
+        let stagePts = highestStageCleared * 120
+        let precisionPts = bestError.map { Int(max(0, 500 - $0 * 1000)) } ?? 0
+        let perfectPts = (perfectCount + legendaryCount) * 3
+        return stagePts + precisionPts + perfectPts
+    }
+
     var rank: String {
         guard lifetimeAttempts >= 5 else { return "Unranked" }
         let precise = legendaryCount + perfectCount

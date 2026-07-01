@@ -125,11 +125,22 @@ xcodebuild test -project StopTimer.xcodeproj -scheme StopTimer \
 - **Distractions** — higher stages layer escalating, purely-decorative effects
   (`DistractionOverlayView`), never blocking the Stop orb and fully disabled under Reduced Motion.
 
+## Leaderboard (local placeholder)
+
+The **Ranks** tab shows a composite rating — `PlayerProgress.leaderboardRating` (stage progression +
+best-error precision + a little from perfects) — with the player placed against seeded sample
+players. The UI talks only to the `LeaderboardService` protocol, so it swaps to a real source
+without touching the view: implement `LeaderboardService` with **Game Center (GameKit)** or a backend
+and inject it into `LeaderboardViewModel`. Until then it's clearly labeled a preview (not truly global).
+
 ## What to build next
 
-1. **More modes** — Endless (lives), Zen, local Daily on top of the stage ladder.
-2. **Profile depth** — achievements, daily streak.
-3. **Beta** — TestFlight, screenshots, App Store copy.
+1. **Make the leaderboard real** — a `GameCenterLeaderboardService` (enable the Game Center
+   capability, create the leaderboard in App Store Connect, authenticate `GKLocalPlayer`, submit the
+   rating) or a backend implementation of `LeaderboardService`.
+2. **More modes** — Endless (lives), Zen, local Daily on top of the stage ladder.
+3. **Profile depth** — achievements, daily streak.
+4. **Beta** — TestFlight, screenshots, App Store copy.
 
 Already in: bright-arcade UI + rich home hub, stage ladder, closeness-based rewards + accuracy meter,
 cosmetic store, distractions, difficulty-ramped targets, glossy 3D buttons, tap-the-orb-to-stop,

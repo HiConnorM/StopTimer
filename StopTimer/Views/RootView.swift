@@ -17,11 +17,14 @@ struct RootView: View {
             StoreView()
                 .tabItem { Label("Store", systemImage: "bag.fill") }.tag(1)
 
+            LeaderboardView(progressStore: progressStore)
+                .tabItem { Label("Ranks", systemImage: "trophy.fill") }.tag(2)
+
             ProfileView(progressStore: progressStore)
-                .tabItem { Label("Profile", systemImage: "person.fill") }.tag(2)
+                .tabItem { Label("Profile", systemImage: "person.fill") }.tag(3)
 
             SettingsView()
-                .tabItem { Label("Settings", systemImage: "gearshape.fill") }.tag(3)
+                .tabItem { Label("Settings", systemImage: "gearshape.fill") }.tag(4)
         }
         .tint(Constants.Theme.accent)
         .preferredColorScheme(.light)
