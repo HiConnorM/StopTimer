@@ -143,11 +143,22 @@ awards new ones after each round and the result screen celebrates them. See the 
 screen (Profile → Achievements) for earned/locked state with progress bars; equip badges/frames from
 the Store, shown on your Profile.
 
+## Game modes & juice
+
+- **Modes** (`GameMode`, chosen from the Home "Game Modes" grid): **Classic** (stage ladder),
+  **Endless** (3 lives — Close/Miss costs a life, streak grows on Good+), and **Tap Rush** (mash the
+  button for 5s; score = tap count, best saved). Each mode flow is its own view model; per-round
+  precision still feeds lifetime stats/achievements.
+- **Look** — glossy "casual mobile" pill buttons (`GlossyPillStyle`: saturated gradient, bold dark
+  outline, diagonal shine) plus glossy mode cards.
+- **Juice** — full-screen `ConfettiView` on wins (stage clear, top grade, new best, achievement),
+  `LoseFlashView` + shake on losses, springy press feedback + light haptics everywhere.
+
 ## What to build next
 
-1. **Game modes** — Endless (lives), Blitz (1–4s), Perfect Hunt, Daily Global, on top of the ladder.
+1. **More modes** — Blitz (1–4s), Perfect Hunt, Daily Global on the same `GameMode` plumbing.
 2. **Ranked + seasons** — 10-round sets scored by average accuracy + consistency; weekly resets with
-   seasonal prestige cosmetics (this reuses the achievement/prestige plumbing).
+   seasonal prestige cosmetics (reuses the achievement/prestige plumbing).
 3. **Make the leaderboard real** — a `GameCenterLeaderboardService` (or backend) behind the existing
    `LeaderboardService` protocol.
 4. **Beta** — TestFlight, screenshots, App Store copy.

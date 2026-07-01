@@ -18,7 +18,20 @@ struct ResultView: View {
     @EnvironmentObject private var progress: ProgressStore
     @State private var cardsIn = false
 
+    private var isWin: Bool {
+        stageCleared || !newAchievements.isEmpty || result.grade == .legendary || result.grade == .perfect
+    }
+    private var isLoss: Bool { result.grade == .miss }
+
     var body: some View {
+        ZStack {
+            if isLoss { LoseFlashView(reducedMotion: reducedMotion) }
+            content
+            if isWin { ConfettiView(reducedMotion: reducedMotion) }
+        }
+    }
+
+    private var content: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 18) {
                 GradeBadge(grade: result.grade,
@@ -198,11 +211,9 @@ struct ResultView: View {
             }
 
             HStack(spacing: 14) {
-                PrimaryButton(title: "RETRY", face: .white, lip: Color.black.opacity(0.12),
-                              foreground: Constants.Theme.textPrimary, depth: 7, height: 56) { onRetry() }
+                PrimaryButton(title: "RETRY", face: Constants.Theme.blue, height: 58, icon: "arrow.counterclockwise") { onRetry() }
                 if stageCleared {
-                    PrimaryButton(title: "NEXT", face: Constants.Theme.green,
-                                  lip: Color(red: 0.10, green: 0.55, blue: 0.30), depth: 7, height: 56) { onNext() }
+                    PrimaryButton(title: "NEXT", face: Constants.Theme.green, height: 58, icon: "arrow.right") { onNext() }
                 }
             }
             .padding(.horizontal, 24)

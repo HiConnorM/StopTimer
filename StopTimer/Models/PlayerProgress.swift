@@ -35,6 +35,10 @@ struct PlayerProgress: Codable, Equatable {
     var highestStageCleared: Int = 0
     var currentStage: Int = 1
 
+    // Mode bests
+    var endlessBest: Int = 0
+    var bestTapCount: Int = 0
+
     // Cosmetics & achievements
     var ownedCosmeticIDs: [String] = []
     /// CosmeticType.rawValue -> equipped item id.
@@ -87,7 +91,8 @@ struct PlayerProgress: Codable, Equatable {
         case xp, coins, currentCombo, longestCombo, lifetimeAttempts, bestError, totalAbsoluteError
         case legendaryCount, perfectCount, excellentCount, greatCount, goodCount, closeCount, missCount
         case currentPerfectStreak, bestPerfectStreak, currentNoMissStreak, bestNoMissStreak
-        case highestStageCleared, currentStage, ownedCosmeticIDs, equippedCosmetics, earnedAchievementIDs
+        case highestStageCleared, currentStage, endlessBest, bestTapCount
+        case ownedCosmeticIDs, equippedCosmetics, earnedAchievementIDs
     }
 
     init(from decoder: Decoder) throws {
@@ -103,6 +108,8 @@ struct PlayerProgress: Codable, Equatable {
         currentNoMissStreak = i(.currentNoMissStreak); bestNoMissStreak = i(.bestNoMissStreak)
         highestStageCleared = i(.highestStageCleared)
         currentStage = max(1, i(.currentStage))
+        endlessBest = i(.endlessBest)
+        bestTapCount = i(.bestTapCount)
         ownedCosmeticIDs = (try? c.decodeIfPresent([String].self, forKey: .ownedCosmeticIDs)) ?? []
         equippedCosmetics = (try? c.decodeIfPresent([String: String].self, forKey: .equippedCosmetics)) ?? [:]
         earnedAchievementIDs = (try? c.decodeIfPresent([String].self, forKey: .earnedAchievementIDs)) ?? []

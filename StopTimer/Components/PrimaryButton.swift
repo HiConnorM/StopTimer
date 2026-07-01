@@ -1,70 +1,63 @@
 import SwiftUI
 
-/// Big, glossy, "juicy" 3D button. A darker lip sits beneath the face; pressing
-/// compresses the face down onto the lip for a satisfying physical click.
+/// Glossy "casual mobile" pill button: saturated vertical gradient, bold dark
+/// outline, a diagonal shine, and a springy press. Matches the UI-pack look.
 struct PrimaryButton: View {
     let title: String
     var face: Color = Constants.Theme.accent
-    var lip: Color = Constants.Theme.accentDark
     var foreground: Color = .white
-    var depth: CGFloat = 9
-    var height: CGFloat = 66
+    var height: CGFloat = 62
+    var icon: String? = nil
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Text(title)
-                .font(.system(size: 24, weight: .black, design: .rounded))
-                .tracking(1.5)
+            HStack(spacing: 10) {
+                if let icon { Image(systemName: icon).font(.system(size: 20, weight: .black)) }
+                Text(title)
+                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .tracking(1)
+            }
         }
-        .buttonStyle(JuicyButtonStyle(face: face, lip: lip, foreground: foreground,
-                                      depth: depth, height: height))
+        .buttonStyle(GlossyPillStyle(face: face, foreground: foreground, height: height))
     }
 }
 
-/// The reusable juicy press style. Used for Start / Stop / Play / Retry / Next.
-struct JuicyButtonStyle: ButtonStyle {
+/// The reusable glossy-pill press style.
+struct GlossyPillStyle: ButtonStyle {
     var face: Color
-    var lip: Color
-    var foreground: Color
-    var depth: CGFloat
-    var height: CGFloat
-    var cornerRadius: CGFloat = 24
+    var foreground: Color = .white
+    var height: CGFloat = 62
 
     func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
-        ZStack(alignment: .top) {
-            // Lip — the darker block the face presses onto.
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(lip)
-                .frame(height: height)
-                .offset(y: depth)
+        let outline = face.darker
 
-            // Face — glossy top, carries the label.
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(face)
-                .frame(height: height)
-                .overlay(
-                    // Glossy highlight across the top third.
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.40), Color.white.opacity(0.0)],
-                                startPoint: .top, endPoint: .center
-                            )
-                        )
-                        .padding(2)
-                )
-                .overlay(
-                    configuration.label
-                        .foregroundStyle(foreground)
-                        .shadow(color: lip.opacity(0.5), radius: 0, y: 1)
-                )
-                .offset(y: pressed ? depth : 0)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.bottom, depth)
-        .animation(.spring(response: 0.16, dampingFraction: 0.45), value: pressed)
+        return configuration.label
+            .foregroundStyle(foreground)
+            .shadow(color: outline.opacity(0.6), radius: 0, y: 1)
+            .frame(maxWidth: .infinity)
+            .frame(height: height)
+            .background(
+                ZStack {
+                    Capsule().fill(
+                        LinearGradient(colors: [face.lighter, face, face.darker],
+                                       startPoint: .top, endPoint: .bottom))
+                    // Diagonal shine across the upper half.
+                    Capsule()
+                        .fill(LinearGradient(
+                            stops: [.init(color: .white.opacity(0.55), location: 0.0),
+                                    .init(color: .white.opacity(0.12), location: 0.32),
+                                    .init(color: .clear, location: 0.5)],
+                            startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .padding(3)
+                    Capsule().stroke(outline, lineWidth: 3)
+                }
+            )
+            .shadow(color: outline.opacity(0.5), radius: pressed ? 2 : 7, y: pressed ? 1 : 5)
+            .scaleEffect(pressed ? 0.95 : 1)
+            .offset(y: pressed ? 3 : 0)
+            .animation(.spring(response: 0.16, dampingFraction: 0.5), value: pressed)
     }
 }
 

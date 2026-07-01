@@ -10,7 +10,19 @@ struct HomeView: View {
 
     @State private var appeared = false
     @State private var showStages = false
-    @State private var playingStage: StageLevel?
+    @State private var activeGame: ActiveGame?
+
+    /// Which mode flow is currently presented full-screen.
+    enum ActiveGame: Identifiable {
+        case classic(StageLevel), endless, tapRush
+        var id: String {
+            switch self {
+            case .classic(let s): return "classic-\(s.stageNumber)"
+            case .endless: return "endless"
+            case .tapRush: return "tapRush"
+            }
+        }
+    }
 
     init(progressStore: ProgressStore, haptics: HapticsManager) {
         _vm = StateObject(wrappedValue: HomeViewModel(progressStore: progressStore))
@@ -30,7 +42,7 @@ struct HomeView: View {
                         header.appearSlide(appeared, delay: 0.00)
                         logo.appearSlide(appeared, delay: 0.05)
                         playHero.appearSlide(appeared, delay: 0.10)
-                        stagesButton.appearSlide(appeared, delay: 0.14)
+                        modesSection.appearSlide(appeared, delay: 0.14)
                         levelCard.appearSlide(appeared, delay: 0.18)
                         statsGrid.appearSlide(appeared, delay: 0.22)
                     }
@@ -40,16 +52,57 @@ struct HomeView: View {
                 }
             }
             .navigationDestination(isPresented: $showStages) {
-                StageSelectView(onPick: { stage in showStages = false; playingStage = stage })
+                StageSelectView(onPick: { stage in showStages = false; activeGame = .classic(stage) })
             }
         }
         .onAppear { appeared = true }
-        .fullScreenCover(item: $playingStage) { stage in
-            GameView(progressStore: progressStore, haptics: haptics, stage: stage,
-                     onHome: { playingStage = nil })
+        .fullScreenCover(item: $activeGame) { game in
+            gameCover(game)
                 .environmentObject(settingsVM)
                 .environmentObject(progressStore)
                 .preferredColorScheme(.light)
+        }
+    }
+
+    @ViewBuilder
+    private func gameCover(_ game: ActiveGame) -> some View {
+        switch game {
+        case .classic(let stage):
+            GameView(progressStore: progressStore, haptics: haptics, stage: stage,
+                     onHome: { activeGame = nil })
+        case .endless:
+            EndlessGameView(progressStore: progressStore, haptics: haptics,
+                            onHome: { activeGame = nil })
+        case .tapRush:
+            TapRushView(progressStore: progressStore, haptics: haptics,
+                        onHome: { activeGame = nil })
+        }
+    }
+
+    // MARK: Modes
+
+    private var modesSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("GAME MODES")
+                .font(.caption.weight(.black)).tracking(2)
+                .foregroundStyle(Constants.Theme.textSecondary)
+            LazyVGrid(columns: columns, spacing: 12) {
+                ModeCardView(mode: .endless, bestText: "Best: \(vm.endlessBest)") { activeGame = .endless }
+                ModeCardView(mode: .tapRush, bestText: "Best: \(vm.bestTapCount)") { activeGame = .tapRush }
+            }
+            Button(action: { showStages = true }) {
+                HStack {
+                    Label("All Stages", systemImage: "square.grid.2x2.fill")
+                        .font(.system(.subheadline, design: .rounded).weight(.bold))
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.caption.weight(.bold))
+                }
+                .foregroundStyle(Constants.Theme.textPrimary)
+                .padding(14)
+                .background(Constants.Theme.card, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: .black.opacity(0.05), radius: 6, y: 3)
+            }
+            .buttonStyle(PressableStyle(scale: 0.98))
         }
     }
 
@@ -83,7 +136,7 @@ struct HomeView: View {
     // MARK: Featured stage play
 
     private var playHero: some View {
-        Button(action: { playingStage = vm.currentStage }) {
+        Button(action: { activeGame = .classic(vm.currentStage) }) {
             HStack(spacing: 16) {
                 ZStack {
                     Circle().fill(Color.white.opacity(0.22)).frame(width: 58, height: 58)
@@ -113,22 +166,6 @@ struct HomeView: View {
             .shadow(color: Constants.Theme.accent.opacity(0.40), radius: 18, y: 9)
         }
         .buttonStyle(PressableStyle(scale: 0.97))
-    }
-
-    private var stagesButton: some View {
-        Button(action: { showStages = true }) {
-            HStack {
-                Label("Choose Stage", systemImage: "square.grid.2x2.fill")
-                    .font(.system(.subheadline, design: .rounded).weight(.bold))
-                Spacer()
-                Image(systemName: "chevron.right").font(.caption.weight(.bold))
-            }
-            .foregroundStyle(Constants.Theme.textPrimary)
-            .padding(16)
-            .background(Constants.Theme.card, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
-        }
-        .buttonStyle(PressableStyle(scale: 0.98))
     }
 
     // MARK: Level + stats

@@ -22,6 +22,12 @@ final class HapticsManager {
         UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
     }
 
+    /// Light click for rapid tapping (Tap Rush).
+    func tick() {
+        guard hapticsEnabled else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.6)
+    }
+
     // MARK: Grade feedback
 
     func play(for grade: AccuracyGrade) {

@@ -41,4 +41,8 @@ final class HomeViewModel: ObservableObject {
     var currentStageNumber: Int { p.highestUnlockedStage }
     var currentStage: StageLevel { StageCatalog.stage(currentStageNumber) }
     var equippedTitle: String? { progressStore.equippedTitle }
+
+    // Mode bests
+    var endlessBest: Int { p.endlessBest }
+    var bestTapCount: Int { p.bestTapCount }
 }

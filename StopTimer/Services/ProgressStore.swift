@@ -67,6 +67,36 @@ final class ProgressStore: ObservableObject {
         save()
     }
 
+    // MARK: Mode results
+
+    /// Credits a Tap Rush run (XP/coins by taps) and updates the best. Returns true
+    /// if it's a new personal best.
+    @discardableResult
+    func recordTapRush(taps: Int) -> Bool {
+        var p = progress
+        let isBest = taps > p.bestTapCount
+        if isBest { p.bestTapCount = taps }
+        p.xp += taps * 3
+        p.coins += max(0, taps / 2)
+        progress = p
+        save()
+        return isBest
+    }
+
+    /// Credits an Endless run's final streak (bonus XP/coins) and updates the best.
+    /// (Per-round precision rewards are applied via `applyResult` during the run.)
+    @discardableResult
+    func recordEndless(streak: Int) -> Bool {
+        var p = progress
+        let isBest = streak > p.endlessBest
+        if isBest { p.endlessBest = streak }
+        p.xp += streak * 10
+        p.coins += streak * 2
+        progress = p
+        save()
+        return isBest
+    }
+
     // MARK: Stages
 
     func isStageUnlocked(_ n: Int) -> Bool { n <= progress.highestUnlockedStage }
